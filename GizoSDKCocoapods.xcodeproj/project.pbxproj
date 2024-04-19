@@ -8,11 +8,81 @@
 
 /* Begin PBXBuildFile section */
 		2A558B992BD241CB00F14202 /* GizoSDKCocoapods.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A558B982BD241CB00F14202 /* GizoSDKCocoapods.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2A558BA12BD2424400F14202 /* GizoBaseSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BA02BD2424400F14202 /* GizoBaseSetting.swift */; };
+		2A558BA32BD2426100F14202 /* GizoGpsSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BA22BD2426100F14202 /* GizoGpsSetting.swift */; };
+		2A558BA52BD2428000F14202 /* GizoImuSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BA42BD2428000F14202 /* GizoImuSetting.swift */; };
+		2A558BA72BD2429700F14202 /* GizoVideoSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BA62BD2429700F14202 /* GizoVideoSetting.swift */; };
+		2A558BA92BD242AD00F14202 /* GizoBatterySetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BA82BD242AD00F14202 /* GizoBatterySetting.swift */; };
+		2A558BAB2BD242CA00F14202 /* GizoOrientationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BAA2BD242CA00F14202 /* GizoOrientationSetting.swift */; };
+		2A558BAD2BD242E300F14202 /* GizoUserActivitySetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BAC2BD242E300F14202 /* GizoUserActivitySetting.swift */; };
+		2A558BAF2BD242FD00F14202 /* GizoAppOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BAE2BD242FD00F14202 /* GizoAppOptions.swift */; };
+		2A558BB12BD2431300F14202 /* GizoCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BB02BD2431300F14202 /* GizoCommon.swift */; };
+		2A558BB32BD2433700F14202 /* TripCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BB22BD2433700F14202 /* TripCacheManager.swift */; };
+		2A558BB52BD2434F00F14202 /* DriveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BB42BD2434F00F14202 /* DriveManager.swift */; };
+		2A558BB72BD2436C00F14202 /* Gizo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BB62BD2436B00F14202 /* Gizo.swift */; };
+		2A558BB92BD2438500F14202 /* GizoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BB82BD2438500F14202 /* GizoApp.swift */; };
+		2A558BBB2BD2439C00F14202 /* GizoAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BBA2BD2439C00F14202 /* GizoAnalysis.swift */; };
+		2A558BBE2BD243C500F14202 /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BBD2BD243C500F14202 /* BaseModel.swift */; };
+		2A558BC02BD243DA00F14202 /* LocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BBF2BD243DA00F14202 /* LocationModel.swift */; };
+		2A558BC22BD243F200F14202 /* TripCSVActivityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BC12BD243F200F14202 /* TripCSVActivityModel.swift */; };
+		2A558BC42BD2440900F14202 /* TripCSVGPSModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BC32BD2440900F14202 /* TripCSVGPSModel.swift */; };
+		2A558BC62BD2442200F14202 /* TripCSVIMUModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BC52BD2442200F14202 /* TripCSVIMUModel.swift */; };
+		2A558BC82BD2443F00F14202 /* TripCSVTTCModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BC72BD2443F00F14202 /* TripCSVTTCModel.swift */; };
+		2A558BCA2BD2445900F14202 /* TripCSVAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BC92BD2445900F14202 /* TripCSVAppModel.swift */; };
+		2A558BCC2BD2447400F14202 /* TripCSVPhoneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BCB2BD2447400F14202 /* TripCSVPhoneModel.swift */; };
+		2A558BCF2BD244A500F14202 /* HttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BCE2BD244A500F14202 /* HttpManager.swift */; };
+		2A558BD12BD244BF00F14202 /* TokenValidateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD02BD244BF00F14202 /* TokenValidateManager.swift */; };
+		2A558BD32BD244D600F14202 /* RSACrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD22BD244D600F14202 /* RSACrypt.swift */; };
+		2A558BD52BD244EC00F14202 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD42BD244EC00F14202 /* LocationManager.swift */; };
+		2A558BD72BD2450400F14202 /* MotionActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD62BD2450400F14202 /* MotionActivityManager.swift */; };
+		2A558BD92BD2451A00F14202 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD82BD2451A00F14202 /* MotionManager.swift */; };
+		2A558BDB2BD2453100F14202 /* DateTimeUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BDA2BD2453100F14202 /* DateTimeUtil.swift */; };
+		2A558BDD2BD2454A00F14202 /* MTAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BDC2BD2454A00F14202 /* MTAlert.swift */; };
+		2A558BDF2BD2456000F14202 /* LogActivityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BDE2BD2456000F14202 /* LogActivityModel.swift */; };
+		2A558BE12BD2457500F14202 /* ThermalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BE02BD2457500F14202 /* ThermalManager.swift */; };
+		2A7898DD2BD245AB000B5AB4 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */; };
+		2A7898DF2BD24648000B5AB4 /* GizoSDK.podspec in Sources */ = {isa = PBXBuildFile; fileRef = 2A7898DE2BD24648000B5AB4 /* GizoSDK.podspec */; };
+		2A7898E12BD2465E000B5AB4 /* LICENSE in Sources */ = {isa = PBXBuildFile; fileRef = 2A7898E02BD2465E000B5AB4 /* LICENSE */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2A558B952BD241CB00F14202 /* GizoSDKCocoapods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GizoSDKCocoapods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A558B982BD241CB00F14202 /* GizoSDKCocoapods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GizoSDKCocoapods.h; sourceTree = "<group>"; };
+		2A558BA02BD2424400F14202 /* GizoBaseSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoBaseSetting.swift; sourceTree = "<group>"; };
+		2A558BA22BD2426100F14202 /* GizoGpsSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoGpsSetting.swift; sourceTree = "<group>"; };
+		2A558BA42BD2428000F14202 /* GizoImuSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoImuSetting.swift; sourceTree = "<group>"; };
+		2A558BA62BD2429700F14202 /* GizoVideoSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoVideoSetting.swift; sourceTree = "<group>"; };
+		2A558BA82BD242AD00F14202 /* GizoBatterySetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoBatterySetting.swift; sourceTree = "<group>"; };
+		2A558BAA2BD242CA00F14202 /* GizoOrientationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoOrientationSetting.swift; sourceTree = "<group>"; };
+		2A558BAC2BD242E300F14202 /* GizoUserActivitySetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoUserActivitySetting.swift; sourceTree = "<group>"; };
+		2A558BAE2BD242FD00F14202 /* GizoAppOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoAppOptions.swift; sourceTree = "<group>"; };
+		2A558BB02BD2431300F14202 /* GizoCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoCommon.swift; sourceTree = "<group>"; };
+		2A558BB22BD2433700F14202 /* TripCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCacheManager.swift; sourceTree = "<group>"; };
+		2A558BB42BD2434F00F14202 /* DriveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveManager.swift; sourceTree = "<group>"; };
+		2A558BB62BD2436B00F14202 /* Gizo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gizo.swift; sourceTree = "<group>"; };
+		2A558BB82BD2438500F14202 /* GizoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoApp.swift; sourceTree = "<group>"; };
+		2A558BBA2BD2439C00F14202 /* GizoAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoAnalysis.swift; sourceTree = "<group>"; };
+		2A558BBD2BD243C500F14202 /* BaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
+		2A558BBF2BD243DA00F14202 /* LocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationModel.swift; sourceTree = "<group>"; };
+		2A558BC12BD243F200F14202 /* TripCSVActivityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCSVActivityModel.swift; sourceTree = "<group>"; };
+		2A558BC32BD2440900F14202 /* TripCSVGPSModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCSVGPSModel.swift; sourceTree = "<group>"; };
+		2A558BC52BD2442200F14202 /* TripCSVIMUModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCSVIMUModel.swift; sourceTree = "<group>"; };
+		2A558BC72BD2443F00F14202 /* TripCSVTTCModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCSVTTCModel.swift; sourceTree = "<group>"; };
+		2A558BC92BD2445900F14202 /* TripCSVAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCSVAppModel.swift; sourceTree = "<group>"; };
+		2A558BCB2BD2447400F14202 /* TripCSVPhoneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCSVPhoneModel.swift; sourceTree = "<group>"; };
+		2A558BCE2BD244A500F14202 /* HttpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpManager.swift; sourceTree = "<group>"; };
+		2A558BD02BD244BF00F14202 /* TokenValidateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenValidateManager.swift; sourceTree = "<group>"; };
+		2A558BD22BD244D600F14202 /* RSACrypt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSACrypt.swift; sourceTree = "<group>"; };
+		2A558BD42BD244EC00F14202 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		2A558BD62BD2450400F14202 /* MotionActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionActivityManager.swift; sourceTree = "<group>"; };
+		2A558BD82BD2451A00F14202 /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
+		2A558BDA2BD2453100F14202 /* DateTimeUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeUtil.swift; sourceTree = "<group>"; };
+		2A558BDC2BD2454A00F14202 /* MTAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTAlert.swift; sourceTree = "<group>"; };
+		2A558BDE2BD2456000F14202 /* LogActivityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogActivityModel.swift; sourceTree = "<group>"; };
+		2A558BE02BD2457500F14202 /* ThermalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThermalManager.swift; sourceTree = "<group>"; };
+		2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		2A7898DE2BD24648000B5AB4 /* GizoSDK.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = GizoSDK.podspec; sourceTree = "<group>"; };
+		2A7898E02BD2465E000B5AB4 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +99,8 @@
 		2A558B8B2BD241CB00F14202 = {
 			isa = PBXGroup;
 			children = (
+				2A7898E02BD2465E000B5AB4 /* LICENSE */,
+				2A7898DE2BD24648000B5AB4 /* GizoSDK.podspec */,
 				2A558B972BD241CB00F14202 /* GizoSDKCocoapods */,
 				2A558B962BD241CB00F14202 /* Products */,
 			);
@@ -45,9 +117,66 @@
 		2A558B972BD241CB00F14202 /* GizoSDKCocoapods */ = {
 			isa = PBXGroup;
 			children = (
+				2A558BCD2BD2448E00F14202 /* Utils */,
+				2A558BBC2BD243B000F14202 /* Model */,
+				2A558B9F2BD2422100F14202 /* Base */,
 				2A558B982BD241CB00F14202 /* GizoSDKCocoapods.h */,
+				2A558BB22BD2433700F14202 /* TripCacheManager.swift */,
+				2A558BB42BD2434F00F14202 /* DriveManager.swift */,
+				2A558BB62BD2436B00F14202 /* Gizo.swift */,
+				2A558BB82BD2438500F14202 /* GizoApp.swift */,
+				2A558BBA2BD2439C00F14202 /* GizoAnalysis.swift */,
 			);
 			path = GizoSDKCocoapods;
+			sourceTree = "<group>";
+		};
+		2A558B9F2BD2422100F14202 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				2A558BA02BD2424400F14202 /* GizoBaseSetting.swift */,
+				2A558BA22BD2426100F14202 /* GizoGpsSetting.swift */,
+				2A558BA42BD2428000F14202 /* GizoImuSetting.swift */,
+				2A558BA62BD2429700F14202 /* GizoVideoSetting.swift */,
+				2A558BA82BD242AD00F14202 /* GizoBatterySetting.swift */,
+				2A558BAA2BD242CA00F14202 /* GizoOrientationSetting.swift */,
+				2A558BAC2BD242E300F14202 /* GizoUserActivitySetting.swift */,
+				2A558BAE2BD242FD00F14202 /* GizoAppOptions.swift */,
+				2A558BB02BD2431300F14202 /* GizoCommon.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		2A558BBC2BD243B000F14202 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2A558BBD2BD243C500F14202 /* BaseModel.swift */,
+				2A558BBF2BD243DA00F14202 /* LocationModel.swift */,
+				2A558BC12BD243F200F14202 /* TripCSVActivityModel.swift */,
+				2A558BC32BD2440900F14202 /* TripCSVGPSModel.swift */,
+				2A558BC52BD2442200F14202 /* TripCSVIMUModel.swift */,
+				2A558BC72BD2443F00F14202 /* TripCSVTTCModel.swift */,
+				2A558BC92BD2445900F14202 /* TripCSVAppModel.swift */,
+				2A558BCB2BD2447400F14202 /* TripCSVPhoneModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2A558BCD2BD2448E00F14202 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				2A558BCE2BD244A500F14202 /* HttpManager.swift */,
+				2A558BD02BD244BF00F14202 /* TokenValidateManager.swift */,
+				2A558BD22BD244D600F14202 /* RSACrypt.swift */,
+				2A558BD42BD244EC00F14202 /* LocationManager.swift */,
+				2A558BD62BD2450400F14202 /* MotionActivityManager.swift */,
+				2A558BD82BD2451A00F14202 /* MotionManager.swift */,
+				2A558BDA2BD2453100F14202 /* DateTimeUtil.swift */,
+				2A558BDC2BD2454A00F14202 /* MTAlert.swift */,
+				2A558BDE2BD2456000F14202 /* LogActivityModel.swift */,
+				2A558BE02BD2457500F14202 /* ThermalManager.swift */,
+				2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -93,6 +222,7 @@
 				TargetAttributes = {
 					2A558B942BD241CB00F14202 = {
 						CreatedOnToolsVersion = 14.3.1;
+						LastSwiftMigration = 1430;
 					};
 				};
 			};
@@ -129,6 +259,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A558BC62BD2442200F14202 /* TripCSVIMUModel.swift in Sources */,
+				2A558BDF2BD2456000F14202 /* LogActivityModel.swift in Sources */,
+				2A558BDD2BD2454A00F14202 /* MTAlert.swift in Sources */,
+				2A558BA32BD2426100F14202 /* GizoGpsSetting.swift in Sources */,
+				2A7898DF2BD24648000B5AB4 /* GizoSDK.podspec in Sources */,
+				2A558BD72BD2450400F14202 /* MotionActivityManager.swift in Sources */,
+				2A558BB52BD2434F00F14202 /* DriveManager.swift in Sources */,
+				2A558BD12BD244BF00F14202 /* TokenValidateManager.swift in Sources */,
+				2A558BA92BD242AD00F14202 /* GizoBatterySetting.swift in Sources */,
+				2A558BCC2BD2447400F14202 /* TripCSVPhoneModel.swift in Sources */,
+				2A558BAD2BD242E300F14202 /* GizoUserActivitySetting.swift in Sources */,
+				2A7898DD2BD245AB000B5AB4 /* CameraManager.swift in Sources */,
+				2A558BDB2BD2453100F14202 /* DateTimeUtil.swift in Sources */,
+				2A558BBB2BD2439C00F14202 /* GizoAnalysis.swift in Sources */,
+				2A558BA12BD2424400F14202 /* GizoBaseSetting.swift in Sources */,
+				2A558BC82BD2443F00F14202 /* TripCSVTTCModel.swift in Sources */,
+				2A558BCA2BD2445900F14202 /* TripCSVAppModel.swift in Sources */,
+				2A558BA52BD2428000F14202 /* GizoImuSetting.swift in Sources */,
+				2A558BD52BD244EC00F14202 /* LocationManager.swift in Sources */,
+				2A558BAF2BD242FD00F14202 /* GizoAppOptions.swift in Sources */,
+				2A558BD92BD2451A00F14202 /* MotionManager.swift in Sources */,
+				2A558BC02BD243DA00F14202 /* LocationModel.swift in Sources */,
+				2A558BAB2BD242CA00F14202 /* GizoOrientationSetting.swift in Sources */,
+				2A558BBE2BD243C500F14202 /* BaseModel.swift in Sources */,
+				2A558BA72BD2429700F14202 /* GizoVideoSetting.swift in Sources */,
+				2A558BE12BD2457500F14202 /* ThermalManager.swift in Sources */,
+				2A558BB12BD2431300F14202 /* GizoCommon.swift in Sources */,
+				2A558BCF2BD244A500F14202 /* HttpManager.swift in Sources */,
+				2A558BB72BD2436C00F14202 /* Gizo.swift in Sources */,
+				2A558BC42BD2440900F14202 /* TripCSVGPSModel.swift in Sources */,
+				2A558BB32BD2433700F14202 /* TripCacheManager.swift in Sources */,
+				2A558BD32BD244D600F14202 /* RSACrypt.swift in Sources */,
+				2A558BC22BD243F200F14202 /* TripCSVActivityModel.swift in Sources */,
+				2A558BB92BD2438500F14202 /* GizoApp.swift in Sources */,
+				2A7898E12BD2465E000B5AB4 /* LICENSE in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,7 +351,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -243,7 +408,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -258,6 +423,7 @@
 		2A558B9D2BD241CB00F14202 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -281,6 +447,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -289,6 +456,7 @@
 		2A558B9E2BD241CB00F14202 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
