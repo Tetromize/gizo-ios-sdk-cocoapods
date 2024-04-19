@@ -1,0 +1,6 @@
+cp -R $HOME/Library/Developer/Xcode/DerivedData/GizoSDKCocoapods-gdvkzeouynhmjucalsucqvxrnokc/Build/Products ./Products
+
+xcodebuild -create-xcframework \  -framework Products/Release-iphoneos/GizoSDKCocoapods.framework \
+  -framework Products/Release-iphonesimulator/GizoSDKCocoapods.framework \
+  -output GizoSDKCocoapods.xcframework
+xcframework successfully written out to: GizoSDKCocoapods.xcframework

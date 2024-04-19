@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1045B6BD60821F0BFD5A38AE /* Pods_GizoSDKCocoapods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2195C97EEAFD6D1E9C714F37 /* Pods_GizoSDKCocoapods.framework */; };
 		2A558B992BD241CB00F14202 /* GizoSDKCocoapods.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A558B982BD241CB00F14202 /* GizoSDKCocoapods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2A558BA12BD2424400F14202 /* GizoBaseSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BA02BD2424400F14202 /* GizoBaseSetting.swift */; };
 		2A558BA32BD2426100F14202 /* GizoGpsSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BA22BD2426100F14202 /* GizoGpsSetting.swift */; };
@@ -41,11 +42,10 @@
 		2A558BDF2BD2456000F14202 /* LogActivityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BDE2BD2456000F14202 /* LogActivityModel.swift */; };
 		2A558BE12BD2457500F14202 /* ThermalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BE02BD2457500F14202 /* ThermalManager.swift */; };
 		2A7898DD2BD245AB000B5AB4 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */; };
-		2A7898DF2BD24648000B5AB4 /* GizoSDK.podspec in Sources */ = {isa = PBXBuildFile; fileRef = 2A7898DE2BD24648000B5AB4 /* GizoSDK.podspec */; };
-		2A7898E12BD2465E000B5AB4 /* LICENSE in Sources */ = {isa = PBXBuildFile; fileRef = 2A7898E02BD2465E000B5AB4 /* LICENSE */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2195C97EEAFD6D1E9C714F37 /* Pods_GizoSDKCocoapods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GizoSDKCocoapods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A558B952BD241CB00F14202 /* GizoSDKCocoapods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GizoSDKCocoapods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A558B982BD241CB00F14202 /* GizoSDKCocoapods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GizoSDKCocoapods.h; sourceTree = "<group>"; };
 		2A558BA02BD2424400F14202 /* GizoBaseSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoBaseSetting.swift; sourceTree = "<group>"; };
@@ -83,6 +83,8 @@
 		2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		2A7898DE2BD24648000B5AB4 /* GizoSDK.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = GizoSDK.podspec; sourceTree = "<group>"; };
 		2A7898E02BD2465E000B5AB4 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		5B979DD7D3D0E2C79C350943 /* Pods-GizoSDKCocoapods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GizoSDKCocoapods.release.xcconfig"; path = "Target Support Files/Pods-GizoSDKCocoapods/Pods-GizoSDKCocoapods.release.xcconfig"; sourceTree = "<group>"; };
+		CAAE39744772C032F71AE4A8 /* Pods-GizoSDKCocoapods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GizoSDKCocoapods.debug.xcconfig"; path = "Target Support Files/Pods-GizoSDKCocoapods/Pods-GizoSDKCocoapods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,12 +92,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1045B6BD60821F0BFD5A38AE /* Pods_GizoSDKCocoapods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		155409254134711B49E5819E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CAAE39744772C032F71AE4A8 /* Pods-GizoSDKCocoapods.debug.xcconfig */,
+				5B979DD7D3D0E2C79C350943 /* Pods-GizoSDKCocoapods.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		2A558B8B2BD241CB00F14202 = {
 			isa = PBXGroup;
 			children = (
@@ -103,6 +115,8 @@
 				2A7898DE2BD24648000B5AB4 /* GizoSDK.podspec */,
 				2A558B972BD241CB00F14202 /* GizoSDKCocoapods */,
 				2A558B962BD241CB00F14202 /* Products */,
+				155409254134711B49E5819E /* Pods */,
+				D4F1543E07A48174663D7AA8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -179,6 +193,14 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		D4F1543E07A48174663D7AA8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2195C97EEAFD6D1E9C714F37 /* Pods_GizoSDKCocoapods.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -197,6 +219,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2A558B9C2BD241CB00F14202 /* Build configuration list for PBXNativeTarget "GizoSDKCocoapods" */;
 			buildPhases = (
+				7B0BDB13EE8909908FC6BC43 /* [CP] Check Pods Manifest.lock */,
 				2A558B902BD241CB00F14202 /* Headers */,
 				2A558B912BD241CB00F14202 /* Sources */,
 				2A558B922BD241CB00F14202 /* Frameworks */,
@@ -254,6 +277,31 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		7B0BDB13EE8909908FC6BC43 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GizoSDKCocoapods-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		2A558B912BD241CB00F14202 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -263,7 +311,6 @@
 				2A558BDF2BD2456000F14202 /* LogActivityModel.swift in Sources */,
 				2A558BDD2BD2454A00F14202 /* MTAlert.swift in Sources */,
 				2A558BA32BD2426100F14202 /* GizoGpsSetting.swift in Sources */,
-				2A7898DF2BD24648000B5AB4 /* GizoSDK.podspec in Sources */,
 				2A558BD72BD2450400F14202 /* MotionActivityManager.swift in Sources */,
 				2A558BB52BD2434F00F14202 /* DriveManager.swift in Sources */,
 				2A558BD12BD244BF00F14202 /* TokenValidateManager.swift in Sources */,
@@ -293,7 +340,6 @@
 				2A558BD32BD244D600F14202 /* RSACrypt.swift in Sources */,
 				2A558BC22BD243F200F14202 /* TripCSVActivityModel.swift in Sources */,
 				2A558BB92BD2438500F14202 /* GizoApp.swift in Sources */,
-				2A7898E12BD2465E000B5AB4 /* LICENSE in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -422,12 +468,14 @@
 		};
 		2A558B9D2BD241CB00F14202 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CAAE39744772C032F71AE4A8 /* Pods-GizoSDKCocoapods.debug.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = UYJ3B4Z65H;
+				DEVELOPMENT_TEAM = 59T7H63PY8;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -455,12 +503,14 @@
 		};
 		2A558B9E2BD241CB00F14202 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5B979DD7D3D0E2C79C350943 /* Pods-GizoSDKCocoapods.release.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = UYJ3B4Z65H;
+				DEVELOPMENT_TEAM = 59T7H63PY8;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
