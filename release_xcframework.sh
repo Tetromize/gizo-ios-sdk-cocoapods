@@ -72,7 +72,7 @@ cd gizo-ios-sdk-cocoapods-alpha
 
 # 12. Launch prepare_package script within cloned repo
 echo "sh prepare_package.sh $FRAMEWORK_VERSION $FRAMEWORK_NAME..."
-sh prepare_package.sh $FRAMEWORK_VERSION $FRAMEWORK_NAME
+sh ./prepare_package.sh $FRAMEWORK_VERSION $FRAMEWORK_NAME
 
 # 1. Remove old data for prevent issues for the new data
 echo "Remove old xcframework resources..."
