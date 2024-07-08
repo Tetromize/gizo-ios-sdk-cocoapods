@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'GizoSDK'
-  s.version          = '1.0.2'
+  s.version          = '1.0.3'
   s.swift_versions   = '5'
   s.summary          = 'A comprehensive SDK for integrating advanced functionalities provided by GIZO in iOS apps.'
   s.description      = <<-DESC
@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Tech' => 'tech@artificient.de' }
   s.source           = { :http => "https://github.com/artificient-ai/gizo-ios-sdk-cocoapods-alpha/raw/#{s.version}/GizoSDK/#{s.version}/GizoSDK.zip" }
-  s.platform = :ios, '15.0'
+  s.platform = :ios, '13.0'
   s.vendored_frameworks = 'GizoSDK.xcframework'
   s.dependency 'MapboxMaps', '10.12.3'
   s.dependency 'MapboxNavigation', '2.12.0'

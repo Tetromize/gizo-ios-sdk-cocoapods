@@ -82,10 +82,8 @@
 		2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		2A7898DE2BD24648000B5AB4 /* GizoSDK.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = GizoSDK.podspec; sourceTree = "<group>"; };
 		2A7898E02BD2465E000B5AB4 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		5B979DD7D3D0E2C79C350943 /* Pods-GizoSDKCocoapods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GizoSDKCocoapods.release.xcconfig"; path = "Target Support Files/Pods-GizoSDKCocoapods/Pods-GizoSDKCocoapods.release.xcconfig"; sourceTree = "<group>"; };
 		9F2DECEBE2324AC50A26D1C9 /* Pods-GizoSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GizoSDK.debug.xcconfig"; path = "Target Support Files/Pods-GizoSDK/Pods-GizoSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		BB35DCC5F4883F75F9D10CF3 /* Pods_GizoSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GizoSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAAE39744772C032F71AE4A8 /* Pods-GizoSDKCocoapods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GizoSDKCocoapods.debug.xcconfig"; path = "Target Support Files/Pods-GizoSDKCocoapods/Pods-GizoSDKCocoapods.debug.xcconfig"; sourceTree = "<group>"; };
 		F47CDB8A36C9B6525382F359 /* Pods-GizoSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GizoSDK.release.xcconfig"; path = "Target Support Files/Pods-GizoSDK/Pods-GizoSDK.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -104,8 +102,6 @@
 		155409254134711B49E5819E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CAAE39744772C032F71AE4A8 /* Pods-GizoSDKCocoapods.debug.xcconfig */,
-				5B979DD7D3D0E2C79C350943 /* Pods-GizoSDKCocoapods.release.xcconfig */,
 				9F2DECEBE2324AC50A26D1C9 /* Pods-GizoSDK.debug.xcconfig */,
 				F47CDB8A36C9B6525382F359 /* Pods-GizoSDK.release.xcconfig */,
 			);
@@ -401,7 +397,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -458,7 +454,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
