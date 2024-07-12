@@ -33,14 +33,20 @@
 		2A558BCF2BD244A500F14202 /* HttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BCE2BD244A500F14202 /* HttpManager.swift */; };
 		2A558BD12BD244BF00F14202 /* TokenValidateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD02BD244BF00F14202 /* TokenValidateManager.swift */; };
 		2A558BD32BD244D600F14202 /* RSACrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD22BD244D600F14202 /* RSACrypt.swift */; };
-		2A558BD52BD244EC00F14202 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD42BD244EC00F14202 /* LocationManager.swift */; };
-		2A558BD72BD2450400F14202 /* MotionActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD62BD2450400F14202 /* MotionActivityManager.swift */; };
-		2A558BD92BD2451A00F14202 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BD82BD2451A00F14202 /* MotionManager.swift */; };
 		2A558BDB2BD2453100F14202 /* DateTimeUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BDA2BD2453100F14202 /* DateTimeUtil.swift */; };
 		2A558BDD2BD2454A00F14202 /* MTAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BDC2BD2454A00F14202 /* MTAlert.swift */; };
 		2A558BDF2BD2456000F14202 /* LogActivityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BDE2BD2456000F14202 /* LogActivityModel.swift */; };
-		2A558BE12BD2457500F14202 /* ThermalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A558BE02BD2457500F14202 /* ThermalManager.swift */; };
 		2A7898DD2BD245AB000B5AB4 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */; };
+		2A8ACBF62C4147F8005345C0 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACBF52C4147F8005345C0 /* DataManager.swift */; };
+		2A8ACBF82C414872005345C0 /* GPSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACBF72C414872005345C0 /* GPSManager.swift */; };
+		2A8ACBFA2C4148DE005345C0 /* AuthorizationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACBF92C4148DE005345C0 /* AuthorizationStatus.swift */; };
+		2A8ACBFC2C414A25005345C0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACBFB2C414A25005345C0 /* Constants.swift */; };
+		2A8ACBFE2C414A9E005345C0 /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACBFD2C414A9E005345C0 /* ActivityManager.swift */; };
+		2A8ACC002C414B15005345C0 /* IMUManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACBFF2C414B15005345C0 /* IMUManager.swift */; };
+		2A8ACC022C414C2F005345C0 /* PhoneEventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACC012C414C2F005345C0 /* PhoneEventManager.swift */; };
+		2A8ACC042C414CAE005345C0 /* BatteryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACC032C414CAE005345C0 /* BatteryManager.swift */; };
+		2A8ACC062C414DC1005345C0 /* BatteryStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACC052C414DC1005345C0 /* BatteryStatus.swift */; };
+		2A8ACC082C414E1E005345C0 /* ThermalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACC072C414E1E005345C0 /* ThermalManager.swift */; };
 		C218AC9BF9DE54444189AA05 /* Pods_GizoSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB35DCC5F4883F75F9D10CF3 /* Pods_GizoSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -72,16 +78,22 @@
 		2A558BCE2BD244A500F14202 /* HttpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpManager.swift; sourceTree = "<group>"; };
 		2A558BD02BD244BF00F14202 /* TokenValidateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenValidateManager.swift; sourceTree = "<group>"; };
 		2A558BD22BD244D600F14202 /* RSACrypt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSACrypt.swift; sourceTree = "<group>"; };
-		2A558BD42BD244EC00F14202 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
-		2A558BD62BD2450400F14202 /* MotionActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionActivityManager.swift; sourceTree = "<group>"; };
-		2A558BD82BD2451A00F14202 /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		2A558BDA2BD2453100F14202 /* DateTimeUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeUtil.swift; sourceTree = "<group>"; };
 		2A558BDC2BD2454A00F14202 /* MTAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTAlert.swift; sourceTree = "<group>"; };
 		2A558BDE2BD2456000F14202 /* LogActivityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogActivityModel.swift; sourceTree = "<group>"; };
-		2A558BE02BD2457500F14202 /* ThermalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThermalManager.swift; sourceTree = "<group>"; };
 		2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		2A7898DE2BD24648000B5AB4 /* GizoSDK.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = GizoSDK.podspec; sourceTree = "<group>"; };
 		2A7898E02BD2465E000B5AB4 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		2A8ACBF52C4147F8005345C0 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		2A8ACBF72C414872005345C0 /* GPSManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPSManager.swift; sourceTree = "<group>"; };
+		2A8ACBF92C4148DE005345C0 /* AuthorizationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationStatus.swift; sourceTree = "<group>"; };
+		2A8ACBFB2C414A25005345C0 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		2A8ACBFD2C414A9E005345C0 /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
+		2A8ACBFF2C414B15005345C0 /* IMUManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMUManager.swift; sourceTree = "<group>"; };
+		2A8ACC012C414C2F005345C0 /* PhoneEventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneEventManager.swift; sourceTree = "<group>"; };
+		2A8ACC032C414CAE005345C0 /* BatteryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryManager.swift; sourceTree = "<group>"; };
+		2A8ACC052C414DC1005345C0 /* BatteryStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryStatus.swift; sourceTree = "<group>"; };
+		2A8ACC072C414E1E005345C0 /* ThermalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThermalManager.swift; path = ../Model/ThermalManager.swift; sourceTree = "<group>"; };
 		9F2DECEBE2324AC50A26D1C9 /* Pods-GizoSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GizoSDK.debug.xcconfig"; path = "Target Support Files/Pods-GizoSDK/Pods-GizoSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		BB35DCC5F4883F75F9D10CF3 /* Pods_GizoSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GizoSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F47CDB8A36C9B6525382F359 /* Pods-GizoSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GizoSDK.release.xcconfig"; path = "Target Support Files/Pods-GizoSDK/Pods-GizoSDK.release.xcconfig"; sourceTree = "<group>"; };
@@ -171,6 +183,9 @@
 				2A558BC72BD2443F00F14202 /* TripCSVTTCModel.swift */,
 				2A558BC92BD2445900F14202 /* TripCSVAppModel.swift */,
 				2A558BCB2BD2447400F14202 /* TripCSVPhoneModel.swift */,
+				2A8ACBF92C4148DE005345C0 /* AuthorizationStatus.swift */,
+				2A8ACBFB2C414A25005345C0 /* Constants.swift */,
+				2A8ACC052C414DC1005345C0 /* BatteryStatus.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -181,14 +196,17 @@
 				2A558BCE2BD244A500F14202 /* HttpManager.swift */,
 				2A558BD02BD244BF00F14202 /* TokenValidateManager.swift */,
 				2A558BD22BD244D600F14202 /* RSACrypt.swift */,
-				2A558BD42BD244EC00F14202 /* LocationManager.swift */,
-				2A558BD62BD2450400F14202 /* MotionActivityManager.swift */,
-				2A558BD82BD2451A00F14202 /* MotionManager.swift */,
 				2A558BDA2BD2453100F14202 /* DateTimeUtil.swift */,
 				2A558BDC2BD2454A00F14202 /* MTAlert.swift */,
 				2A558BDE2BD2456000F14202 /* LogActivityModel.swift */,
-				2A558BE02BD2457500F14202 /* ThermalManager.swift */,
 				2A7898DC2BD245AB000B5AB4 /* CameraManager.swift */,
+				2A8ACBF52C4147F8005345C0 /* DataManager.swift */,
+				2A8ACBF72C414872005345C0 /* GPSManager.swift */,
+				2A8ACBFD2C414A9E005345C0 /* ActivityManager.swift */,
+				2A8ACBFF2C414B15005345C0 /* IMUManager.swift */,
+				2A8ACC012C414C2F005345C0 /* PhoneEventManager.swift */,
+				2A8ACC032C414CAE005345C0 /* BatteryManager.swift */,
+				2A8ACC072C414E1E005345C0 /* ThermalManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -329,11 +347,12 @@
 				2A558BDF2BD2456000F14202 /* LogActivityModel.swift in Sources */,
 				2A558BDD2BD2454A00F14202 /* MTAlert.swift in Sources */,
 				2A558BA32BD2426100F14202 /* GizoGpsSetting.swift in Sources */,
-				2A558BD72BD2450400F14202 /* MotionActivityManager.swift in Sources */,
+				2A8ACC042C414CAE005345C0 /* BatteryManager.swift in Sources */,
 				2A558BB52BD2434F00F14202 /* DriveManager.swift in Sources */,
 				2A558BD12BD244BF00F14202 /* TokenValidateManager.swift in Sources */,
 				2A558BA92BD242AD00F14202 /* GizoBatterySetting.swift in Sources */,
 				2A558BCC2BD2447400F14202 /* TripCSVPhoneModel.swift in Sources */,
+				2A8ACBF62C4147F8005345C0 /* DataManager.swift in Sources */,
 				2A558BAD2BD242E300F14202 /* GizoUserActivitySetting.swift in Sources */,
 				2A7898DD2BD245AB000B5AB4 /* CameraManager.swift in Sources */,
 				2A558BDB2BD2453100F14202 /* DateTimeUtil.swift in Sources */,
@@ -341,22 +360,27 @@
 				2A558BA12BD2424400F14202 /* GizoBaseSetting.swift in Sources */,
 				2A558BC82BD2443F00F14202 /* TripCSVTTCModel.swift in Sources */,
 				2A558BCA2BD2445900F14202 /* TripCSVAppModel.swift in Sources */,
+				2A8ACC082C414E1E005345C0 /* ThermalManager.swift in Sources */,
 				2A558BA52BD2428000F14202 /* GizoImuSetting.swift in Sources */,
-				2A558BD52BD244EC00F14202 /* LocationManager.swift in Sources */,
 				2A558BAF2BD242FD00F14202 /* GizoAppOptions.swift in Sources */,
-				2A558BD92BD2451A00F14202 /* MotionManager.swift in Sources */,
 				2A558BC02BD243DA00F14202 /* LocationModel.swift in Sources */,
+				2A8ACBF82C414872005345C0 /* GPSManager.swift in Sources */,
 				2A558BAB2BD242CA00F14202 /* GizoOrientationSetting.swift in Sources */,
 				2A558BBE2BD243C500F14202 /* BaseModel.swift in Sources */,
 				2A558BA72BD2429700F14202 /* GizoVideoSetting.swift in Sources */,
-				2A558BE12BD2457500F14202 /* ThermalManager.swift in Sources */,
 				2A558BB12BD2431300F14202 /* GizoCommon.swift in Sources */,
 				2A558BCF2BD244A500F14202 /* HttpManager.swift in Sources */,
 				2A558BB72BD2436C00F14202 /* Gizo.swift in Sources */,
+				2A8ACC062C414DC1005345C0 /* BatteryStatus.swift in Sources */,
 				2A558BC42BD2440900F14202 /* TripCSVGPSModel.swift in Sources */,
 				2A558BB32BD2433700F14202 /* TripCacheManager.swift in Sources */,
+				2A8ACBFE2C414A9E005345C0 /* ActivityManager.swift in Sources */,
 				2A558BD32BD244D600F14202 /* RSACrypt.swift in Sources */,
+				2A8ACBFA2C4148DE005345C0 /* AuthorizationStatus.swift in Sources */,
+				2A8ACC002C414B15005345C0 /* IMUManager.swift in Sources */,
 				2A558BC22BD243F200F14202 /* TripCSVActivityModel.swift in Sources */,
+				2A8ACC022C414C2F005345C0 /* PhoneEventManager.swift in Sources */,
+				2A8ACBFC2C414A25005345C0 /* Constants.swift in Sources */,
 				2A558BB92BD2438500F14202 /* GizoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

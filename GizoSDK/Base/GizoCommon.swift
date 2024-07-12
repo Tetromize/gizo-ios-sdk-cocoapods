@@ -15,12 +15,6 @@ import CoreLocation
 //    case NOT_LOADED = 3
 //}
 
-public enum BatteryStatus: Int {
-    case NORMAL = 0
-    case LOW_BATTERY_WARNING = 1
-    case LOW_BATTERY_STOP = 2
-}
-
 public enum VideoRecordStatus: Int {
     case Start = 0
     case Stop = 1

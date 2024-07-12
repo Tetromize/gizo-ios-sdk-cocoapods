@@ -10,7 +10,7 @@ import UIKit
 import AVFoundation
 import CoreLocation
 
-class DriveManager : NSObject, MBLocationManagerDelegate, MotionManagerDelegate, ThermalMonitorDelegate {
+class DriveManager : NSObject{
     
     private var orientationText: String!
 //    private var videoCaptureManager: VideoCaptureManager?

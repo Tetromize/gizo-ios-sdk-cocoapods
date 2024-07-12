@@ -12,8 +12,8 @@ struct TripCSVGPSModel: Codable {
     var altitude: Double?
     var latitude: Double?
     var longitude: Double?
-    var speed: String = "0"
-    var speedLimit: String = "N/A"
+    var speed: Double?
+    var speedLimit: Double?
     var climb: String = "0.0"
     var course: Double?
     var EPX: String = "N/A"
@@ -26,12 +26,14 @@ struct TripCSVGPSModel: Codable {
     static var csvDesc: String {
         return "GPSTime,Altitude,Latitude,Longitude,Speed,SpeedLimit,Climb,Course,EPX,EPY,EPV,EPS,EPC,EPD"
     }
-
+    
     var csvValue: String {
-        let altitudeText = NSString.init(format: "%.1f", self.altitude!)
-        let latitudeText = NSString.init(format: "%.6f", self.latitude!)
-        let longitudeText = NSString.init(format: "%.6f", self.longitude!)
-        let courseText = NSString.init(format: "%.6f", self.course!)
-        return "\(self.gpsTime),\(altitudeText),\(latitudeText),\(longitudeText),\(self.speed),\(self.speedLimit),\(self.climb),\(courseText),\(self.EPX),\(self.EPY),\(self.EPV),\(self.EPS),\(self.EPC),\(self.EPD)"
+        let altitudeText = NSString.init(format: "%.1f", self.altitude ?? 0)
+        let latitudeText = NSString.init(format: "%.6f", self.latitude ?? 0)
+        let longitudeText = NSString.init(format: "%.6f", self.longitude ?? 0)
+        let speedText = NSString.init(format: "%.0f", self.speed ?? 0)
+        let speedLimitText = NSString.init(format: "%.0f", self.speedLimit ?? 0)
+        let courseText = NSString.init(format: "%.6f", self.course ?? 0)
+        return "\(self.gpsTime),\(altitudeText),\(latitudeText),\(longitudeText),\(speedText),\(speedLimitText),\(self.climb),\(courseText),\(self.EPX),\(self.EPY),\(self.EPV),\(self.EPS),\(self.EPC),\(self.EPD)"
     }
 }

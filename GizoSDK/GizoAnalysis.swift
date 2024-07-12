@@ -25,29 +25,53 @@ public class GizoAnalysis: NSObject {
     }
     
     public func stop() {
+        if (!TokenValidateManager.shared.isValidate) {
+            print("Token Invalidate")
+            return
+        }
         driveManager.stopVideoCapture()
         driveManager.delegate = nil
     }
     
     public func startSavingSession() {
+        if (!TokenValidateManager.shared.isValidate) {
+            print("Token Invalidate")
+            return
+        }
         GizoCommon.shared.isSavingSession = true
         driveManager.startRecording()
     }
     
     public func stopSavingSession() {
+        if (!TokenValidateManager.shared.isValidate) {
+            print("Token Invalidate")
+            return
+        }
         GizoCommon.shared.isSavingSession = false
         driveManager.stopRecording()
     }
     
     public func attachPreview(preview: UIView) {
+        if (!TokenValidateManager.shared.isValidate) {
+            print("Token Invalidate")
+            return
+        }
         driveManager.attachPreview(previewView: preview)
     }
     
     public func lockPreview() {
+        if (!TokenValidateManager.shared.isValidate) {
+            print("Token Invalidate")
+            return
+        }
         driveManager.lockPreview()
     }
     
     public func unlockPreview(preview: UIView?) {
+        if (!TokenValidateManager.shared.isValidate) {
+            print("Token Invalidate")
+            return
+        }
         driveManager.unlockPreview(previewView: preview)
     }
 }

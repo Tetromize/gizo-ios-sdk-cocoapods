@@ -10,8 +10,8 @@ import Foundation
 public struct LocationModel: Codable {
     var latitude: Double?
     var longitude: Double?
-    var speed: String?
-    var speedValue: Int?
-    var course: Double?
     var altitude: Double?
+    var speed: Double?
+    var speedLimit: Double?
+    var course: Double?
 }
