@@ -5,323 +5,58 @@
 //  Created by Hepburn on 2023/12/5.
 //
 
-import Foundation
-import UIKit
+import SwiftUI
+import Combine
 import AVFoundation
-import CoreLocation
+import UIKit
 
 class DriveManager : NSObject{
     
-    private var orientationText: String!
-//    private var videoCaptureManager: VideoCaptureManager?
+    var isRecording: Bool = false
+    var isStartRecording: Bool = false
+    var isStartSensors: Bool = false
+//    var isRecordingNoCamera: Bool = false
+    var recordingState: RecordingState = RecordingState.STILL
+    var recordingPage: RecordingState = RecordingState.STILL
+    var isAutoStop: Bool = true
+    var batteryStatus: BatteryStatus = BatteryStatus.normal
+    var thermalState: ProcessInfo.ThermalState = ProcessInfo.ThermalState.nominal
+
     private var cameraManager = CameraManager.shared
-    private var lastWarnTime: Date?
-    private var isCoverHidden: Bool=false
-//    private var videoIndex: Int=0
-    public var cacheManager: TripCacheManager = TripCacheManager.init()
-    private var gpsTimer: DispatchSourceTimer?
-    private var imuTimer: DispatchSourceTimer?
-    private var activityType: String = ""
-    private var currentActivityType: String = ""
-    public var batteryStatus: BatteryStatus=BatteryStatus.NORMAL
-    private var collectUserActivity: Bool=false
-    private var collectTTC: Bool=false
-    public var inProgress: Bool=false
-    public var previewAttached: Bool=false
+    private var gpsManager = GPSManager.shared
+    private var imuManager = IMUManager.shared
+    private var activityManager = ActivityManager.shared
+//    private var appManager = AppManager.shared
+    private var phoneEventManager = PhoneEventManager.shared
+    private var batteryManager = BatteryManager.shared
+    private var thermalManager = ThermalManager.shared
+    private var dataManager = DataManager.shared
+    private var cancellables = Set<AnyCancellable>()
+    
+    private var suppressDangerAlertsUntil: Date?
+    
+    private var stillJob: DispatchWorkItem?
+    private var lastActivity: ActivityType = .still
+    
     public var delegate: GizoAnalysisDelegate?
     var gizoOption = GizoCommon.shared.options
-    var thermalState: ProcessInfo.ThermalState = .nominal
-    public var thermalMonitor: ThermalMonitor?
-
-    func thermalStateDidChange(to state: ProcessInfo.ThermalState) {
-        print("Thermal state: \(state.rawValue)")
-
-        self.thermalState = state
-        if (state == .serious || state == .critical) {
-//            self.stopRecording()
-        }
-    }
     
-    func getVideoPath(videoPath: String) -> String {
-        return videoPath
-    }
-    
-    func lockPreview() {
-        self.cameraManager.previewLayer?.isHidden = true
-    }
-
-    func unlockPreview(previewView: UIView?) {
-        self.cameraManager.previewLayer?.isHidden = false    }
-
-    func attachPreview(previewView: UIView) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-
-            // Check if the camera setup needs to be initialized
-            if self.cameraManager.previewLayer == nil {
-                // Request permissions and setup session if needed
-                self.cameraManager.checkPermissionsAndSetupSession(completion: { success in
-                    if success {
-                        // If setup is successful and session is started, attach the preview
-                        DispatchQueue.main.async {
-                            self.attachPreviewLayer(previewView: previewView)
-                        }
-                    } else {
-                        // Handle the denial of permission or other setup failure
-                        self.lockPreview()
-                    }
-                })
-            } else if let previewLayer = self.cameraManager.previewLayer {
-                setupCameraProcessing()
-                // If already initialized and session is running, just attach the preview
-                self.attachPreviewLayer(previewView: previewView)
-            }
-        }
-    }
-
-    private func attachPreviewLayer(previewView: UIView) {
-        guard let previewLayer = self.cameraManager.previewLayer else { return }
-        previewLayer.frame = previewView.bounds
-        self.adjustPreviewLayerOrientation(previewLayer)
-        if previewLayer.superlayer == nil {
-            previewView.layer.addSublayer(previewLayer)
-        }
-        // Inform delegate about session status if needed
-//        self.delegate?.onSessionStatus(inProgress: self.cameraManager.isSessionRunning, previewAttached: true)
-    }
-    
-    private func adjustPreviewLayerOrientation(_ previewLayer: AVCaptureVideoPreviewLayer) {
-        if let previewConnection = previewLayer.connection, previewConnection.isVideoOrientationSupported {
-            previewConnection.videoOrientation = .landscapeRight
-        }
-    }
-    
-    func didUpdateMotion(orientation: UIDeviceOrientation, isValidInterface: Bool) {
-
-//        print("didUpdateMotion:\(orientation)")
-        if ((orientation == UIDeviceOrientation.landscapeLeft || orientation == UIDeviceOrientation.landscapeRight) && isValidInterface) {
-            if (isCoverHidden) {
-                return
-            }
-            isCoverHidden = true
-        }
-        else {
-            if (!isCoverHidden) {
-                return
-            }
-            isCoverHidden = false
-        }
-        self.delegate?.onGravityAlignmentChange(isAlign: isCoverHidden)
-    }
-    
-    //MBLocationManagerDelegate
-    func didUpdateLocation(model: LocationModel) {
-        updateSpeedColor()
-        var speedLimit: Int? = Int(LocationManager.shared.speedLimit)
-        if (speedLimit == 0) {
-            speedLimit = nil
-        }
-        self.delegate?.onLocationChange(location: CLLocationCoordinate2DMake(model.latitude ?? 0, model.longitude ?? 0), isGpsOn: true)
-        self.delegate?.onSpeedChange(speedLimitKph: speedLimit, speedKph: model.speedValue ?? 0)
-//        if (!inProgress) {
-//            inProgress = true
-//            self.delegate?.onSessionStatus(inProgress: inProgress, previewAttached: previewAttached)
-//        }
-    }
-    
-    func didUpdateSpeedLimit(speedLimit: Double?) {
-        updateSpeedColor()
-    }
-    
-    func updateSpeedColor() {
-//        controlView.updateSpeedColor(speedOver: LocationManager.shared.isSpeedOver)
-    }
-    
-    //VideoCaptureManagerDelegate
-    func videoCaptureSampleBuffer(_ image: UIImage) {
-//        if (PythonManager.sharedInstance.isModelLoaded) {
-//            DispatchQueue.main.async {
-//                let analysisSetting = self.gizoOption?.analysisSetting
-//                if (analysisSetting?.allowAnalysis != nil &&
-//                    (analysisSetting?.allowAnalysis)! &&
-//                    self.batteryStatus == BatteryStatus.NORMAL) {
-//                    self.videoCaptureManager?.isPythonUsing = true
-//
-//                    let startTime = NSDate.now.timeIntervalSince1970
-//                    let img = PythonManager.sharedInstance.infer(img: image)
-//                    let ret = PythonManager.sharedInstance.predict(image: img)
-//
-//                    self.appendTTCSCV(depth: ret, image: image)
-//                    self.videoCaptureManager?.isPythonUsing = false
-//
-//                    if (ret != nil) {
-//                        print("videoCaptureSampleBuffer ret:\(ret!)")
-//                    }
-//                    let endTime = NSDate.now.timeIntervalSince1970
-//                    print("python time:\(endTime-startTime)")
-//                }
-//            }
-//        }
-    }
-    
-//    func videoCameraIntrinsicMatrix(_ text: String) {
-//        let analysisSetting = gizoOption?.analysisSetting
-//        if (analysisSetting?.allowAnalysis != nil && (analysisSetting?.allowAnalysis)! && analysisSetting?.saveMatrixFile != nil && (analysisSetting?.saveMatrixFile)!) {
-//            cacheManager.appendMatrixTxt(text: text, txtPath: analysisSetting?.matrixFileLocation)
-//        }
-//    }
-    
-//    func onRecordingEvent(_ status: Int32) {
-//        self.delegate?.onRecordingEvent(status: VideoRecordStatus(rawValue: Int(status))!)
-//    }
-    
-//    func getTTC(depth: Double?, speed: Double) -> Double {
-//        if (speed < 13.89) {
-//            return (depth ?? 0-2.0)/speed-0.1
-//        }
-//        else {
-//            return (depth ?? 0-2.0)/speed
-//        }
-//    }
-//
-//    func onAnalysisResult(depth: Double?, speed: Int?, ttc: Float?, ttcStatus: TTCStatus, image: UIImage?) {
-//        let time = DateTimeUtil.stringFromDateTime(NSDate.now)
-//        if (self.delegate != nil) {
-//            self.delegate?.onAnalysisResult(preview: image, ttc: ttc, ttcStatus: ttcStatus, frontObjectDistance: depth, egoSpeed: speed, gpsTime: time)
-//            self.delegate?.ttcStatusCalculator(ttc: ttc, egoSpeed: speed, ttcStatus: ttcStatus)
-//            self.delegate?.ttcCalculator(frontObjectDistance: depth, egoSpeed: speed, ttc: ttc)
-//        }
-//    }
-//
-//    func checkTTCWarning(depth: Double?, speed: Double, image: UIImage?) -> Double {
-//        let analysisSetting = gizoOption?.analysisSetting
-//        let collisionThreshold: Double = Double(analysisSetting?.collisionThreshold ?? 0.5)
-//        let tailgatingThreshold: Double = Double(analysisSetting?.tailgatingThreshold ?? 1.0)
-//        let ttc = getTTC(depth: depth, speed: speed)
-//        var isCheck = false
-//        if (speed > 11.1) {
-//            if (ttc >= collisionThreshold && ttc < tailgatingThreshold) {
-////                controlView.updateCollision()
-//                onAnalysisResult(depth: depth, speed: Int(speed * 3.6), ttc: Float(ttc), ttcStatus: .tailgating, image: image)
-//                isCheck = true
-//            }
-//            else if (ttc < collisionThreshold) {
-//                let curTime = NSDate.now
-//                var interval = 0.0
-//                if (lastWarnTime != nil) {
-//                    interval = curTime.timeIntervalSince(lastWarnTime!)
-//                }
-//                if (lastWarnTime == nil || interval > 15) {
-////                    controlView.cleanCollision()
-////                    _ = DriveWarnView.showWarnPop()
-//                    lastWarnTime = curTime
-//                }
-//                onAnalysisResult(depth: depth, speed: Int(speed * 3.6), ttc: Float(ttc), ttcStatus: .collision, image: image)
-//                isCheck = true
-//            }
-//        }
-//        if (!isCheck) {
-//            onAnalysisResult(depth: depth, speed: Int(speed * 3.6), ttc: Float(ttc), ttcStatus: .None, image: image)
-//        }
-//        return ttc
-//    }
-//
-//    func appendTTCSCV(depth: Double?, image: UIImage?) {
-//        let model = TripCSVTTCModel.init()
-//        let speed: Int? = LocationManager.shared.locationModel?.speedValue
-//        var speedValue: Double = 0.0
-//        if (speed != nil) {
-//            speedValue = Double(speed!) / 3.6
-//            model.speed = String(speed ?? 0)
-//        }
-//        if (depth != nil) {
-//            model.Depth = String(depth!)
-//        }
-//        if (speedValue > 11.1) {
-//            let ttc = checkTTCWarning(depth: depth, speed: speedValue, image: image)
-//            model.ttc = String(ttc)
-//        }
-//        else {
-//            onAnalysisResult(depth: depth, speed: speed, ttc: nil, ttcStatus: .None, image: image!)
-//        }
-//        let analysisSetting = gizoOption?.analysisSetting
-//        if (analysisSetting?.saveTtcCsvFile != nil && (analysisSetting?.saveTtcCsvFile)!) {
-//            if(self.collectTTC){
-//                cacheManager.appendTTCCSV(model: model, csvPath: analysisSetting?.ttcFileLocation)
-//            }
-//        }
-//    }
-    
-    func stopVideoRecordAndTTC() {
-//        controlView.changeRecordState(value: false)
-//        videoCaptureManager?.isLowBattery = true
-//        videoCaptureManager?.stopVideoRecorder()
-    }
-    
-    func clearBatteryWarn() {
-//        videoCaptureManager?.isLowBattery = false
-    }
-    
-    @objc func onUploadActivity(noti: Notification) {
-        let userInfo = noti.userInfo!
-        currentActivityType = userInfo["start"] as! String
-        
-        self.delegate?.onUserActivity(type: currentActivityType)
-        if(collectUserActivity){
-            writeToUserActivityCSV(type: currentActivityType)
-        }
-    }
-
-    @objc fileprivate func batteryDidChange() {
-        let batterySetting = gizoOption?.batterySetting
-        let batteryState = UIDevice.current.batteryState
-        print("batteryDidChange batteryState=", batteryState.rawValue)
-        if (batteryState == .unplugged || batteryState == .charging) {
-            let batteryLevel = UIDevice.current.batteryLevel
-            print("batteryDidChange batteryLevel=", batteryLevel)
-            if (batteryLevel < Float(Float(batterySetting?.lowBatteryStop ?? 15)/100.0)) {
-                self.delegate?.onBatteryStatusChange(status: BatteryStatus.LOW_BATTERY_STOP)
-                self.batteryStatus = BatteryStatus.LOW_BATTERY_STOP
-//                self.stopRecording()
-            }
-            else if (batteryLevel < Float(Float(batterySetting?.lowBatteryLimit ?? 25)/100)){
-                self.delegate?.onBatteryStatusChange(status: BatteryStatus.LOW_BATTERY_WARNING)
-                self.batteryStatus = BatteryStatus.LOW_BATTERY_WARNING
-            }
-            else {
-                self.delegate?.onBatteryStatusChange(status: BatteryStatus.NORMAL)
-                self.batteryStatus = BatteryStatus.NORMAL
-            }
-        }
-    }
-    
-    func showLowBatteryView() {
-//        stopVideoRecordAndTTC()
-    }
-    
-    func setupCameraProcessing() {
-        cameraManager.startSession()
-    }
     
     func initialVideoCapture(){
         
         let videoSetting = self.gizoOption?.videoSetting
         if((videoSetting?.allowRecording != nil && videoSetting?.allowRecording ?? false)){
-            UIApplication.shared.isIdleTimerDisabled = true
-            
+            startCamera()
         }
         
         let userActivitySetting = gizoOption?.userActivitySetting
         if (userActivitySetting?.allowUserActivity != nil && (userActivitySetting?.allowUserActivity)!) {
-            MotionActivityManager.shared.startUpdateMotionActivity()
-
-            NotificationCenter.default.addObserver(self, selector: #selector(onUploadActivity), name: NSNotification.Name(rawValue: "kMsg_UpdateActivity"), object: nil)
+            setupActivityProcessing()
         }
         
          let gpsSetting = gizoOption?.gpsSetting
          if (gpsSetting?.allowGps != nil && (gpsSetting?.allowGps)!) {
-             LocationManager.shared.delegate = self
-             LocationManager.shared.startLocationWithAuth(inUse: true)
+             setupGPSProcessing()
          }
         
         let imuSetting = gizoOption?.imuSetting
@@ -329,220 +64,567 @@ class DriveManager : NSObject{
             (imuSetting?.allowGyroscopeSensor != nil && (imuSetting?.allowGyroscopeSensor)!) ||
             (imuSetting?.allowMagneticSensor != nil && (imuSetting?.allowMagneticSensor)!)) {
             
-            MotionManager.shared.delegate = self
-            MotionManager.shared.gizoAnalysisDelegate = self.delegate
-            MotionManager.shared.startMotion()
+            setupIMUProcessing()
         }
         
         let batterySetting = gizoOption?.batterySetting
         if (batterySetting?.checkBattery != nil && (batterySetting?.checkBattery)!) {
-            UIDevice.current.isBatteryMonitoringEnabled = true
-            NotificationCenter.default.addObserver(self, selector: #selector(batteryDidChange), name: UIDevice.batteryLevelDidChangeNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(batteryDidChange), name: UIDevice.batteryStateDidChangeNotification, object: nil)
-            batteryDidChange()
+            setupBatteryProcessing()
         }
         if (batterySetting?.checkThermal != nil && (batterySetting?.checkThermal)!) {
-            self.thermalMonitor = ThermalMonitor()
-            self.thermalMonitor?.delegate = self
-            self.thermalMonitor?.gizoAnalysisDelegate = self.delegate
-            self.thermalMonitor?.currentThermal()
+            setupThermalProcessing()
         }
         
-//        if (!inProgress) {
-//            inProgress = true
-//            self.delegate?.onSessionStatus(inProgress: inProgress, previewAttached: previewAttached)
-//        }
+        isStartSensors = true
+    }
+    
+    func stopVideoCapture(){
+        stopCamera()
+        gpsManager.stopGPS()
+        imuManager.stopMotion()
+        activityManager.stopUpdateMotionActivity()
+        batteryManager.stopBatteryStatus()
+        thermalManager.stopThermalState()
+        
+        isStartSensors = false
     }
     
     func startRecording() {
-        cacheManager.tripTime = DateTimeUtil.stringFromDateTime(date: Date(), format: "yyyy-MM-dd-HH-mm-ss-SSS")
-
-//        let analysisSetting = self.gizoOption?.analysisSetting
-//        if(analysisSetting?.allowAnalysis != nil && analysisSetting?.allowAnalysis ?? false){
-//            cacheManager.checkCSVPath(csvPath: analysisSetting?.ttcFileLocation ?? "", name: "ttc", ext: ".csv") { path in
-//                self.cacheManager.createTTCCSV(csvPath: path)
-//            }
-//            collectTTC = true
-//        }
+        if !checkBatteryStatus() {
+            return
+        }
         
+        if !checkThermalState() {
+            return
+        }
+        
+        if isRecording {
+            isStartRecording = true
+            stopRecording()
+        }
+
+        recordingState = RecordingState.Full
+        let infoDect: [String : Any] = ["TripType": TripType.Full.rawValue]
+
+        dataManager.createTripFolder()
+        dataManager.createLockFile()
+        isRecording = true
+        dataManager.saveTXT(fileName: Constants.infoFileName, text: dataManager.dict2JsonStr(dict: infoDect as NSDictionary) ?? "")
         let videoSetting = gizoOption?.videoSetting
         if (videoSetting?.allowRecording != nil && (videoSetting?.allowRecording)!) {
-            var videoPath = getVideoPath(videoPath: (videoSetting?.fileLocation)!)
-
-            var isDirectory: ObjCBool = false
-            var exists = FileManager.default.fileExists(atPath: videoPath, isDirectory: &isDirectory)
-            if (exists) {
-                videoPath = videoPath + (cacheManager.tripTime ?? "")
-                BaseModel.createDir(path: videoPath)
-            }
-            
-            cameraManager.startRecording(to: videoPath)
-
+            cameraManager.startRecording(to: dataManager.folderPath!)
         }
-        
         let gpsSetting = gizoOption?.gpsSetting
         if (gpsSetting?.allowGps != nil && (gpsSetting?.allowGps)!) {
-            writeToGpsCsv()
+            dataManager.createGPSCSV()
+            gpsManager.startRecording()
         }
-        
         let imuSetting = gizoOption?.imuSetting
         if ((imuSetting?.allowAccelerationSensor != nil && (imuSetting?.allowAccelerationSensor)!) ||
             (imuSetting?.allowGyroscopeSensor != nil && (imuSetting?.allowGyroscopeSensor)!) ||
             (imuSetting?.allowMagneticSensor != nil && (imuSetting?.allowMagneticSensor)!)) {
-            
-            writeToImuCsv()
+            dataManager.createIMUCSV()
+            imuManager.startRecording()
         }
-        
         let userActivitySetting = gizoOption?.userActivitySetting
         if (userActivitySetting?.saveCsvFile != nil && (userActivitySetting?.saveCsvFile)!) {
-            writeToUserActivityCSV(type: currentActivityType)
-            collectUserActivity = true
+            dataManager.createActivityCSV()
+            activityManager.startRecording()
+        }
+        dataManager.createAppCSV()
+        //        appManager.startRecording()
+        let phoneEventSetting = gizoOption?.phoneEventSetting
+        if (phoneEventSetting?.saveCsvFile != nil && (phoneEventSetting?.saveCsvFile)!) {
+            dataManager.createPhoneEventCSV()
+            phoneEventManager.startRecording()
+        }
+    }
+    
+    
+    func attachPreview(previewView: UIView){
+        preview(to: previewView)
+    }
+    
+    
+    func lockPreview(){
+        self.cameraManager.previewLayer?.isHidden = true
+    }
+    
+    
+    func unlockPreview(previewView: UIView?){
+        self.cameraManager.previewLayer?.isHidden = false
+    }
+    
+    func startCamera(){
+        cameraManager.checkPermissionsAndSetupSession()
+
+        setupCameraProcessing()
+    }
+    
+    func stopCamera(){
+        stopSession()
+        
+        if isRecording {
+            stopRecording()
+        }
+    }
+    
+    var previewLayer: AVCaptureVideoPreviewLayer? {
+        cameraManager.previewLayer
+    }
+    
+    func setupCameraProcessing() {
+//        cameraManager.ttcAlertPublisher
+//            .receive(on: RunLoop.main)
+//            .sink { [weak self] alert in
+//                guard let self = self else { return }
+//
+//                self.handleTTCAlert(alert)
+//            }
+//            .store(in: &cancellables)
+//        
+        startSession()
+    }
+    
+    func setupGPSProcessing() {
+        gpsManager.locationUpdatePublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] locationModel in
+                self?.handleLocationUpdate(locationModel)
+            }
+            .store(in: &cancellables)
+        
+        gpsManager.startLocationWithAuth(inUse: false)
+    }
+    
+    func setupIMUProcessing() {
+        imuManager.orientationUpdatePublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isHiddenOrientationCover in
+                self?.handleOrientationScreen(isHiddenOrientationCover)
+            }
+            .store(in: &cancellables)
+        
+        imuManager.startMotion()
+    }
+    
+    func setupActivityProcessing() {
+        activityManager.activityTypePublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] activityTpe in
+                self?.onUserActivityTransitionChange(activityTpe)
+            }
+            .store(in: &cancellables)
+        
+        activityManager.startUpdateMotionActivity()
+    }
+    
+    func setupBatteryProcessing() {
+        batteryManager.batteryStatusPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] batteryStatus in
+                self?.handleBatteryStatusDidChange(batteryStatus)
+            }
+            .store(in: &cancellables)
+        
+        batteryManager.startBatteryStatus()
+    }
+    
+    func setupThermalProcessing() {
+        thermalManager.thermalStatePublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] thermalState in
+                self?.handleThermalStateDidChange(thermalState)
+            }
+            .store(in: &cancellables)
+        
+        thermalManager.startThermalState()
+    }
+    
+    private func handleLocationUpdate(_ locationModel: LocationModel) {
+//        uiState.speedNotSafe = gpsManager.isSpeedOver
+//        uiState.speed = Int(locationModel.speed ?? 0)
+//        uiState.limitSpeed = Int(locationModel.speedLimit ?? 0)
+    }
+    
+//    private func handleTTCAlert(_ alert: TTCAlert) {
+//        switch alert {
+//            case .none:
+//                break
+//
+//            case .warning:
+//                displayWarning()
+//
+//            case .danger:
+//                displayDanger()
+//        }
+//    }
+    
+//    private func displayWarning() {
+//        guard !uiState.warning else { return }
+//        
+//        uiState.warning = true
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//            self.uiState.warning = false
+//        }
+//    }
+
+//    private func displayDanger() {
+//        guard !isDangerAlert, Date() >= (suppressDangerAlertsUntil ?? Date()) else { return }
+//        
+//        isDangerAlert = true
+//        suppressDangerAlertsUntil = Date().addingTimeInterval(15)
+//
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//            self.isDangerAlert = false
+//        }
+//    }
+    
+    private func handleOrientationScreen(_ isHiddenOrientationCover: Bool) {
+//        if hiddenOrientationCover {
+//            return
+//        }
+//        hiddenOrientationCover = isHiddenOrientationCover
+    }
+    
+    private func handleBatteryStatusDidChange(_ batteryStatus: BatteryStatus) {
+        self.batteryStatus = batteryStatus
+//        if batteryStatus != BatteryStatus.normal{
+//            AnalyticManager.shared.logEvent(
+//                name: AnalyticManager.Event.batteryStatus,
+//                parameters: [
+//                    AnalyticManager.Param.batteryStatus: batteryStatus
+//                ]
+//            )
+//        }
+//        if uiState.isRecording == true && batteryStatus == BatteryStatus.stop {
+//            uiState.isShowBatteryDialog = true
+//            cameraManager.disableAi()
+//            stopRecording()
+//        }else if batteryStatus == BatteryStatus.stop {
+//            cameraManager.disableAi()
+//        }
+//        else if batteryStatus == BatteryStatus.warning {
+//            cameraManager.disableAi()
+//        }else if batteryStatus == BatteryStatus.normal {
+//            if thermalState != ProcessInfo.ThermalState.serious {
+//                cameraManager.enableAi()
+//            }
+//        }
+    }
+    
+    private func handleThermalStateDidChange(_ thermalState: ProcessInfo.ThermalState) {
+        self.thermalState = thermalState
+//        if thermalState != .nominal{
+//            AnalyticManager.shared.logEvent(
+//                name: AnalyticManager.Event.thermalStatus,
+//                parameters: [
+//                    AnalyticManager.Param.status: thermalState
+//                ]
+//            )
+//        }
+//        if (uiState.isRecording || uiStateNoCamera.isRecording) && thermalState == ProcessInfo.ThermalState.serious {
+//            uiState.isShowThermalDialog = true
+//            cameraManager.disableAi()
+//            stopRecording()
+//        } else if thermalState == ProcessInfo.ThermalState.serious {
+//            cameraManager.disableAi()
+//        }else{
+//            if batteryStatus == BatteryStatus.normal{
+//                cameraManager.enableAi()
+//            }
+//        }
+    }
+
+    func preview(to view: UIView) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, let previewLayer = self.cameraManager.previewLayer else { return }
+            previewLayer.frame = view.bounds
+            self.adjustPreviewLayerOrientation(previewLayer)
+            if previewLayer.superlayer == nil {
+                view.layer.addSublayer(previewLayer)
+            }
+        }
+    }
+
+    private func adjustPreviewLayerOrientation(_ previewLayer: AVCaptureVideoPreviewLayer) {
+        if let previewConnection = previewLayer.connection, previewConnection.isVideoOrientationSupported {
+            previewConnection.videoOrientation = .landscapeRight
+        }
+    }
+
+    func startSession() {
+        cameraManager.startSession()
+//        isSessionRunning = true
+    }
+
+    func stopSession() {
+        cameraManager.stopSession()
+//        isSessionRunning = false
+    }
+    
+    func checkBatteryStatus() -> Bool{
+        if batteryStatus == BatteryStatus.stop {
+//            uiState.isShowBatteryDialog = true
+//            cameraManager.disableAi()
+            return false
+        }else if batteryStatus == BatteryStatus.warning {
+//            cameraManager.disableAi()
+            return true
+        }else{
+            return true
+        }
+    }
+    
+    func checkThermalState() -> Bool{
+        if thermalState == ProcessInfo.ThermalState.serious {
+//            uiState.isShowThermalDialog = true
+//            uiStateNoCamera.isShowThermalDialog = true
+//            cameraManager.disableAi()
+            return false
+        }else{
+            return true
+        }
+    }
+    
+    func startRecordingNoCamera(autoStop: Bool = true) {
+        self.isAutoStop = autoStop
+
+        if autoStop == true {
+            if !checkBatteryStatus() {
+                return
+            }
         }
         
-        let newAppCsvPath: String = cacheManager.checkCSVPath(csvPath: FileLocationPath.Cache, name: "app", ext: ".csv") { path in
-            self.cacheManager.createAppCSV(csvPath: path)
+        if !checkThermalState() {
+            return
         }
         
-        let newPhoneEventsCsvPath: String = cacheManager.checkCSVPath(csvPath: FileLocationPath.Cache, name: "phone_events", ext: ".csv") { path in
-            self.cacheManager.createPhoneEventCSV(csvPath: path)
+        if isRecording {
+            isStartRecording = true
+            stopRecording()
+        }
+
+        recordingState = RecordingState.NoCamera
+        
+        let infoDect = ["TripType": TripType.ImuGps.rawValue] as [String : Any]
+        dataManager.createTripFolder()
+        dataManager.createLockFile()
+//        uiStateNoCamera.isRecording = true
+//        uiStateNoCamera.startTimeNoCamera = Date()
+        isRecording = true
+        dataManager.saveTXT(fileName: Constants.infoFileName, text: dataManager.dict2JsonStr(dict: infoDect as NSDictionary) ?? "")
+        let gpsSetting = gizoOption?.gpsSetting
+        if (gpsSetting?.allowGps != nil && (gpsSetting?.allowGps)!) {
+            dataManager.createGPSCSV()
+            gpsManager.startRecording()
+        }
+        let imuSetting = gizoOption?.imuSetting
+        if ((imuSetting?.allowAccelerationSensor != nil && (imuSetting?.allowAccelerationSensor)!) ||
+            (imuSetting?.allowGyroscopeSensor != nil && (imuSetting?.allowGyroscopeSensor)!) ||
+            (imuSetting?.allowMagneticSensor != nil && (imuSetting?.allowMagneticSensor)!)) {
+            dataManager.createIMUCSV()
+            imuManager.startRecording()
+        }
+        let userActivitySetting = gizoOption?.userActivitySetting
+        if (userActivitySetting?.saveCsvFile != nil && (userActivitySetting?.saveCsvFile)!) {
+            dataManager.createActivityCSV()
+            activityManager.startRecording()
+        }
+        dataManager.createAppCSV()
+        //        appManager.startRecording()
+        let phoneEventSetting = gizoOption?.phoneEventSetting
+        if (phoneEventSetting?.saveCsvFile != nil && (phoneEventSetting?.saveCsvFile)!) {
+            dataManager.createPhoneEventCSV()
+            phoneEventManager.startRecording()
+        }
+    }
+
+    func startRecordingBackground() {
+        if isRecording {
+            isStartRecording = true
+            stopRecording()
+        }
+        recordingState = RecordingState.Background
+        let infoDect = ["TripType": TripType.Imu.rawValue] as [String : Any]
+
+        dataManager.createTripFolder()
+        dataManager.createLockFile()
+        isRecording = true
+        dataManager.saveTXT(fileName: Constants.infoFileName, text: dataManager.dict2JsonStr(dict: infoDect as NSDictionary) ?? "")
+        let gpsSetting = gizoOption?.gpsSetting
+        if (gpsSetting?.allowGps != nil && (gpsSetting?.allowGps)!) {
+            dataManager.createGPSCSV()
+            gpsManager.startRecording()
+        }
+        let imuSetting = gizoOption?.imuSetting
+        if ((imuSetting?.allowAccelerationSensor != nil && (imuSetting?.allowAccelerationSensor)!) ||
+            (imuSetting?.allowGyroscopeSensor != nil && (imuSetting?.allowGyroscopeSensor)!) ||
+            (imuSetting?.allowMagneticSensor != nil && (imuSetting?.allowMagneticSensor)!)) {
+            dataManager.createIMUCSV()
+            imuManager.startRecording()
+        }
+        let userActivitySetting = gizoOption?.userActivitySetting
+        if (userActivitySetting?.saveCsvFile != nil && (userActivitySetting?.saveCsvFile)!) {
+            dataManager.createActivityCSV()
+            activityManager.startRecording()
+        }
+        dataManager.createAppCSV()
+        //        appManager.startRecording()
+        let phoneEventSetting = gizoOption?.phoneEventSetting
+        if (phoneEventSetting?.saveCsvFile != nil && (phoneEventSetting?.saveCsvFile)!) {
+            dataManager.createPhoneEventCSV()
+            phoneEventManager.startRecording()
         }
     }
     
     func stopRecording() {
-//        videoCaptureManager?.stopVideoRecorder()
-        cameraManager.stopRecording()
+        isRecording = false
 
-        if (gpsTimer != nil) {
-            gpsTimer?.cancel()
-            gpsTimer = nil
+        gpsManager.stopRecording()
+        imuManager.stopRecording()
+        activityManager.stopRecording()
+//        appManager.stopRecording()
+        phoneEventManager.stopRecording()
+        dataManager.removeLockFile()
+        recordingState = RecordingState.STILL
+        if !isStartRecording {
+            if lastActivity == .in_vehicle {
+                stillPauseCancel()
+                notifyInVehicle()
+            } else if lastActivity != .still {
+                stillPauseCancel()
+                changeRecordState(to: .Background)
+            }
         }
         
-        if (imuTimer != nil) {
-            imuTimer?.cancel()
-            imuTimer = nil
+        isStartRecording = false
+    }
+
+    func onUserActivityTransitionChange(_ activityType: ActivityType) {
+        var currentActivityType = activityType
+        if activityType == ActivityType.still || activityType == ActivityType.unknown {
+            currentActivityType = ActivityType.still
         }
-        
-        activityType = ""
-        collectUserActivity = false
-        collectTTC = false
+        let isNewTransition = currentActivityType != lastActivity
+
+        switch recordingState {
+           case .STILL:
+               if !isNewTransition { return }
+
+            if currentActivityType == .in_vehicle {
+                   stillPauseCancel()
+                   notifyInVehicle()
+               } else if currentActivityType != .still {
+                   stillPauseCancel()
+                   changeRecordState(to: .Background)
+               }
+
+           case .Background:
+               if !isNewTransition { return }
+
+               if currentActivityType == .in_vehicle {
+                   stillPauseCancel()
+                   notifyInVehicle()
+               } else if currentActivityType == .still {
+                   stillPauseStart(shortDuration: true) { [weak self] in
+                       guard let self = self else { return }
+                       if lastActivity == .still {
+                           changeRecordState(to: .STILL)
+                       }
+                   }
+               } else {
+                   stillPauseCancel()
+               }
+
+           case .NoCamera:
+               if !isNewTransition { return }
+
+               if currentActivityType == .in_vehicle {
+                   stillPauseCancel()
+               } else if currentActivityType != .in_vehicle {
+                   if !isStillPauseRunning() {
+                       if currentActivityType == .still {
+                           stillPauseStart(shortDuration: false) { [weak self] in
+                               guard let self = self else { return }
+                               if lastActivity == .still {
+                                   changeRecordState(to: .STILL)
+                               } else {
+                                   changeRecordState(to: .Background)
+                               }
+                           }
+                       } else {
+                           stillPauseStart(shortDuration: true) { [weak self] in
+                               guard let self = self else { return }
+                               if lastActivity == .still {
+                                   changeRecordState(to: .STILL)
+                               } else {
+                                   changeRecordState(to: .Background)
+                               }
+                           }
+                       }
+                   }
+               }
+
+           default: break
+           }
+
+        lastActivity = currentActivityType
     }
-    
-    func stopVideoCapture(){
-//        videoCaptureManager?.delegate = nil
-//        videoCaptureManager?.stopVideoCapture()
-        cameraManager.stopSession()
-        
-        LocationManager.shared.delegate = nil
-        LocationManager.shared.stopLocation()
-        MotionManager.shared.delegate = nil
-        MotionManager.shared.stopMotion()
-        self.thermalMonitor?.delegate = nil
-        self.thermalMonitor = nil
-        
-        NotificationCenter.default.removeObserver(self, name: UIDevice.batteryLevelDidChangeNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIDevice.batteryStateDidChangeNotification, object: nil)
-        NotificationCenter.default.removeObserver(self)
-        UIDevice.current.isBatteryMonitoringEnabled = false
-                
-//        if (inProgress) {
-//            inProgress = false
-//            self.delegate?.onSessionStatus(inProgress: inProgress, previewAttached: previewAttached)
-//        }
-    }
-    
-    func writeToGpsCsv(){
-        let gpsSetting = gizoOption?.gpsSetting
-        if (gpsSetting?.allowGps != nil && (gpsSetting?.allowGps)!) {
-            let interval: Double = Double(gpsSetting?.saveDataTimerPeriod ?? 1000)/1000
-            if (gpsTimer == nil) {
-                gpsTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
-                gpsTimer?.schedule(deadline: .now(), repeating: interval)
-                gpsTimer?.setEventHandler {
-                    self.onGPSTimeCheck()
+
+    func changeRecordState(to newRecordingState: RecordingState? = nil) {
+        if isStartSensors {
+//            stopSensors()
+        }
+
+        switch newRecordingState {
+            case nil:
+                if lastActivity == ActivityType.still {
+                    changeRecordState(to: RecordingState.STILL)
+                } else {
+                    changeRecordState(to: RecordingState.Background)
                 }
-                gpsTimer?.activate()
-            }
-            LocationManager.shared.delegate = self
-            LocationManager.shared.startLocationWithAuth(inUse: true)
-        }
-    }
-    
-    func writeToImuCsv(){
-        let imuSetting = gizoOption?.imuSetting
-        if ((imuSetting?.allowAccelerationSensor != nil && (imuSetting?.allowAccelerationSensor)!) ||
-            (imuSetting?.allowGyroscopeSensor != nil && (imuSetting?.allowGyroscopeSensor)!) ||
-            (imuSetting?.allowMagneticSensor != nil && (imuSetting?.allowMagneticSensor)!)) {
-            let interval: Double = Double(imuSetting?.saveDataTimerPeriod ?? 10)/1000
-            if (imuTimer == nil) {
-                imuTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
-                imuTimer?.schedule(deadline: .now(), repeating: interval)
-                imuTimer?.setEventHandler {
-                    self.onIMUTimeCheck()
+            case .STILL:
+                if isRecording {
+                    stopRecording()
                 }
-                imuTimer?.activate()
-            }
-            
-            MotionManager.shared.delegate = self
-            MotionManager.shared.startMotion()
+            case .Background:
+                recordingState = RecordingState.Background
+                if !isStartSensors {
+//                    startSensors()
+                }
+                startRecordingBackground()
+            case .NoCamera:
+                recordingState = RecordingState.NoCamera
+                if !isStartSensors {
+//                    startSensors()
+                }
+                startRecordingNoCamera(autoStop: false)
+            default:
+                break
         }
     }
-    
-    func writeToUserActivityCSV(type: String){
-        if (type != activityType) {
-            let model = TripCSVActivityModel.init()
-            model.started = type
-            model.stopped = activityType
-            cacheManager.appendActivityCSV(model: model, csvPath: gizoOption?.userActivitySetting.fileLocation)
-            activityType = type
-        }
+
+    private func notifyInVehicle() {
+        changeRecordState(to: .NoCamera)
     }
-    
-    //GPS
-    @objc func onGPSTimeCheck() {
-        if (LocationManager.shared.isLocation) {
-            let location: LocationModel = LocationManager.shared.locationModel!
-            var model = TripCSVGPSModel.init()
-            model.altitude = location.altitude
-            model.latitude = location.latitude
-            model.longitude = location.longitude
-            model.speed = (location.speed)!
-            model.course = location.course
-            if (LocationManager.shared.speedLimit > 0) {
-                model.speedLimit = String(LocationManager.shared.speedLimit)
-            }
-            
-            let gpsSetting = gizoOption?.gpsSetting
-            cacheManager.appendGPSCSV(model: model, csvPath: gpsSetting?.fileLocation)
-        }
+
+    private func stillPauseCancel() {
+        stillJob?.cancel()
+        stillJob = nil
     }
-    
-    //IMU
-    @objc func onIMUTimeCheck() {
-        let imuSetting = gizoOption?.imuSetting
-        if (imuSetting?.saveCsvFile != nil && (imuSetting?.saveCsvFile)!) {
-            let model = TripCSVIMUModel.init()
 
-            model.accX = MotionManager.shared.accX.map { String($0) } ?? "N/A"
-            model.accY = MotionManager.shared.accY.map { String($0) } ?? "N/A"
-            model.accZ = MotionManager.shared.accZ.map { String($0) } ?? "N/A"
+    private func stillPauseStart(shortDuration: Bool = false, onDone: @escaping () -> Void) {
+        stillPauseCancel()
+        let workItem = DispatchWorkItem { onDone() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + (shortDuration ? 30 : 5 * 60), execute: workItem)
+        stillJob = workItem
+    }
 
-            model.gyrX = MotionManager.shared.gyrX.map { String($0) } ?? "N/A"
-            model.gyrY = MotionManager.shared.gyrY.map { String($0) } ?? "N/A"
-            model.gyrZ = MotionManager.shared.gyrZ.map { String($0) } ?? "N/A"
-
-            model.magX = MotionManager.shared.magX.map { String($0) } ?? "N/A"
-            model.magY = MotionManager.shared.magY.map { String($0) } ?? "N/A"
-            model.magZ = MotionManager.shared.magZ.map { String($0) } ?? "N/A"
-
-            model.graX = MotionManager.shared.graX.map { String($0) } ?? "N/A"
-            model.graY = MotionManager.shared.graY.map { String($0) } ?? "N/A"
-            model.graZ = MotionManager.shared.graZ.map { String($0) } ?? "N/A"
-
-            model.accLinX = MotionManager.shared.accLinX.map { String($0) } ?? "N/A"
-            model.accLinY = MotionManager.shared.accLinY.map { String($0) } ?? "N/A"
-            model.accLinZ = MotionManager.shared.accLinZ.map { String($0) } ?? "N/A"
-
-            cacheManager.appendIMUCSV(model: model, csvPath: imuSetting?.fileLocation)
-        }
+    private func isStillPauseRunning() -> Bool {
+        stillJob?.isCancelled == false
     }
 }
+
+
+

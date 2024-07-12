@@ -12,9 +12,3 @@ public enum BatteryStatus: Float {
     case stop = 0.15
     case normal = 1
 }
-
-public enum BatteryStatusNoCamera: Float {
-    case warning = 0.15
-    case stop = 0.05
-    case normal = 1
-}

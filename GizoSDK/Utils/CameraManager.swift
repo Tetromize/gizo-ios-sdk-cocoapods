@@ -17,9 +17,9 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var getImage = false
     var matrixText: String = ""
     var isRecordingTTC = false
-    var isEnableAi = true
-    private var collisionThreshold: Float = 0.5
-    var onChangedImage: ((CIImage) -> Void) = {_ in }
+//    var isEnableAi = true
+//    private var collisionThreshold: Float = 0.5
+//    var onChangedImage: ((CIImage) -> Void) = {_ in }
 //    var ttcAlertPublisher = PassthroughSubject<TTCAlert, Never>()
 //    var depthTTCPublisher = PassthroughSubject<Float64?, Never>()
     let context = CIContext(options: nil)
@@ -37,55 +37,47 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var startTime: CMTime?
     private let frameProcessingQueue = DispatchQueue(label: "FrameProcessingQueue")
     
-//    private var dataManager = DataManager.shared
-//    private var gpsManager = GPSManager.shared
+    private var dataManager = DataManager.shared
+    private var gpsManager = GPSManager.shared
     
     static let shared = CameraManager()
     
     override init() {
         super.init()
-//        startSession()
     }
 
-//    static func checkCameraPermission() -> AuthorizationStatus {
-//        switch AVCaptureDevice.authorizationStatus(for: .video) {
-//        case .authorized:
-//            return .authorized
-//        case .denied:
-//            return .denied
-//        case .restricted:
-//            return .restricted
-//        case .notDetermined:
-//            return .notDetermined
-//        }
-//    }
+    static func checkCameraPermission() -> AuthorizationStatus {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            return .authorized
+        case .denied:
+            return .denied
+        case .restricted:
+            return .restricted
+        case .notDetermined:
+            return .notDetermined
+        }
+    }
 
     static func requestCameraPermission() {
         AVCaptureDevice.requestAccess(for: .video) { granted in
         }
     }
     
-    public func checkPermissionsAndSetupSession(completion: @escaping (Bool) -> Void) {
+    public func checkPermissionsAndSetupSession() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             setupCaptureSession()
-            startSession()
-            completion(true)
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                DispatchQueue.main.async {
-                    if granted {
+                if granted {
+                    DispatchQueue.main.async {
                         self?.setupCaptureSession()
-                        self?.startSession()
-                        completion(true)
-                    } else {
-                        completion(false)
                     }
                 }
             }
         default:
             print("Access to the camera is denied or restricted")
-            completion(false)
         }
     }
 
@@ -160,7 +152,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 
     private func setupWriter(to folderURL: URL) {
         let fileURL = folderURL.appendingPathComponent("video").appendingPathExtension("mp4")
-
+        
         do {
             assetWriter = try AVAssetWriter(outputURL: fileURL, fileType: .mp4)
             
@@ -213,13 +205,9 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         assetWriterPixelBufferInput = nil
     }
     
-    func startRecording(to folderURL: String)  {
+    func startRecording(to folderURL: URL)  {
         guard !isRecording else { return }
-        guard let fileURL = URL(string: "file:///" + folderURL) else {
-            print("Invalid URL string: \(folderURL)")
-            return
-        }
-        setupWriter(to: fileURL)
+        setupWriter(to: folderURL)
         isRecording = assetWriter?.startWriting() ?? false
         if isRecording {
             startTime = nil
@@ -241,12 +229,12 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
-        if matrixText.isEmpty {
-            getCameraMatrix(sampleBuffer: sampleBuffer)
-        }
+//        if matrixText.isEmpty {
+//            getCameraMatrix(sampleBuffer: sampleBuffer)
+//        }
 //        if isEnableAi{
 //            let image = imageFromSampleBuffer(sampleBuffer: sampleBuffer)
-//            processFrame(image!)
+////            processFrame(image!)
 //        }
        
         guard isRecording, let assetWriterPixelBufferInput = assetWriterPixelBufferInput, let assetWriterInput = assetWriterInput, assetWriterInput.isReadyForMoreMediaData else { return }
@@ -260,58 +248,62 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
        }
    }
    
-   private func imageFromSampleBuffer(sampleBuffer: CMSampleBuffer) -> CIImage? {
-       guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
-       return CIImage(cvPixelBuffer: imageBuffer)
-   }
+//   private func imageFromSampleBuffer(sampleBuffer: CMSampleBuffer) -> CIImage? {
+//       guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
+//       return CIImage(cvPixelBuffer: imageBuffer)
+//   }
     
-   private func getCameraMatrix(sampleBuffer: CMSampleBuffer) {
-        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, attachmentModeOut: nil) {
-            let intrinsicMatrixPointer = UnsafeRawPointer(CFDataGetBytePtr((cameraIntrinsicData as! CFData))).assumingMemoryBound(to: matrix_float3x3.self)
-            let intrinsicMatrix = intrinsicMatrixPointer.pointee
-            
-            var text = "["
-            var matrixs = Array(repeating: Array(repeating: Float(0), count: 3), count: 3)
-            
-            for i in 0..<3 {
-                let column = [intrinsicMatrix.columns.0, intrinsicMatrix.columns.1, intrinsicMatrix.columns.2][i]
-                matrixs[i][0] = column[0]
-                matrixs[i][1] = column[1]
-                matrixs[i][2] = column[2]
-            }
-
-            for j in 0..<3 {
-                let first = formatFloat(matrixs[0][j])
-                let second = formatFloat(matrixs[1][j])
-                let third = formatFloat(matrixs[2][j])
-                text += "{\"first\":\"\(first)\",\"second\":\"\(second)\",\"third\":\"\(third)\"}"
-                if j < 2 {
-                    text += ","
-                }
-            }
-            
-            text += "]"
-            
-            self.matrixText = text
-        }
-    }
-    
-    private func formatFloat(_ value: Float) -> String {
-        if value.truncatingRemainder(dividingBy: 1) == 0 {
-            return String(format: "%.0f", value) // No decimal part
-        } else {
-            return String(format: "%.3f", value).replacingOccurrences(of: "0+$", with: "", options: .regularExpression)
-        }
-    }
+//   private func getCameraMatrix(sampleBuffer: CMSampleBuffer) {
+//        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, attachmentModeOut: nil) {
+//            let intrinsicMatrixPointer = UnsafeRawPointer(CFDataGetBytePtr((cameraIntrinsicData as! CFData))).assumingMemoryBound(to: matrix_float3x3.self)
+//            let intrinsicMatrix = intrinsicMatrixPointer.pointee
+//            
+//            var text = "["
+//            var matrixs = Array(repeating: Array(repeating: Float(0), count: 3), count: 3)
+//            
+//            for i in 0..<3 {
+//                let column = [intrinsicMatrix.columns.0, intrinsicMatrix.columns.1, intrinsicMatrix.columns.2][i]
+//                matrixs[i][0] = column[0]
+//                matrixs[i][1] = column[1]
+//                matrixs[i][2] = column[2]
+//            }
+//
+//            for j in 0..<3 {
+//                let first = formatFloat(matrixs[0][j])
+//                let second = formatFloat(matrixs[1][j])
+//                let third = formatFloat(matrixs[2][j])
+//                text += "{\"first\":\"\(first)\",\"second\":\"\(second)\",\"third\":\"\(third)\"}"
+//                if j < 2 {
+//                    text += ","
+//                }
+//            }
+//            
+//            text += "]"
+//            
+//            self.matrixText = text
+//        }
+//    }
+//    
+//    private func formatFloat(_ value: Float) -> String {
+//        if value.truncatingRemainder(dividingBy: 1) == 0 {
+//            return String(format: "%.0f", value) // No decimal part
+//        } else {
+//            return String(format: "%.3f", value).replacingOccurrences(of: "0+$", with: "", options: .regularExpression)
+//        }
+//    }
     
 //    private func processFrame(_ frame: CIImage) {
 //        guard !getImage, PythonManager.sharedInstance.isModelLoaded else { return }
 //        getImage = true
-//
+//        
 //        DispatchQueue.global(qos: .userInitiated).async {
 //            if let uiImage = self.convertCIImageToUIImage(ciImage: frame) {
 //                DispatchQueue.main.async {
 //                    let startTime = CFAbsoluteTimeGetCurrent()
+//                    AnalyticManager.shared.startTrace(
+//                        name: AnalyticManager.Event.analysisFPS,
+//                        attributes: [:]
+//                    )
 //                    let processedImage = PythonManager.sharedInstance.infer(img: uiImage)
 //                    let depth = PythonManager.sharedInstance.predict(image: processedImage)
 //                    var ttcAllert = self.ttcDepthAnalyze(depthPtn: depth != nil ? String(depth!) : "None", speed: Float(self.gpsManager.locationModel?.speed ?? 0), collisionThreshold: self.collisionThreshold)
@@ -321,8 +313,14 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 //                    }
 //                    self.getImage = false
 //                    let endTime = CFAbsoluteTimeGetCurrent()
+//                    AnalyticManager.shared.stopTrace(name: AnalyticManager.Event.analysisFPS)
 //                    print("Processing time: \(endTime - startTime) seconds")
 //                }
+//                AnalyticManager.shared.logEvent(
+//                    name: AnalyticManager.Event.videoAnalysisSuccess,
+//                    parameters: [:]
+//                )
+//
 //            } else {
 //                DispatchQueue.main.async {
 //                    self.getImage = false
@@ -339,11 +337,11 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 //    func startRecordingTTC(){
 //        self.isRecordingTTC = true
 //    }
-//
+//    
 //    private func recordTTC(depth: String?) {
 //        let model = TripCSVTTCModel.init()
 //        let speedTTC = GPSManager.shared.locationModel?.speed
-//
+//        
 //        model.speed = speedTTC
 //        if depth?.contains("None") == true {
 //            model.ttc = depth ?? "None"
@@ -367,7 +365,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 //        }
 //        dataManager.appendTTCCSV(model: model)
 //    }
-//
+        
 //    private func ttcDepthAnalyze(depthPtn: String, speed: Float?, collisionThreshold: Float) -> TTCAlert {
 //        let limitSpeed: Float = 11.1
 //        guard let speed = speed, speed != 0, depthPtn.contains("None") == false else {
@@ -393,17 +391,17 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 //            return .none
 //        }
 //    }
-    
-    func stopRecordingTTC(){
-        self.isRecordingTTC = false
-    }
-    
-    func disableAi(){
-        self.isEnableAi = false
-    }
-    
-    func enableAi(){
-        self.isEnableAi = true
-    }
+//    
+//    func stopRecordingTTC(){
+//        self.isRecordingTTC = false
+//    }
+//    
+//    func disableAi(){
+//        self.isEnableAi = false
+//    }
+//    
+//    func enableAi(){
+//        self.isEnableAi = true
+//    }
 }
 

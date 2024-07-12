@@ -17,4 +17,5 @@ public class GizoAppOptions: NSObject {
     public var batterySetting: GizoBatterySetting=GizoBatterySetting()
     public var orientationSetting: GizoOrientationSetting=GizoOrientationSetting()
     public var userActivitySetting: GizoUserActivitySetting=GizoUserActivitySetting()
+    public var phoneEventSetting: GizoPhoneEventSetting=GizoPhoneEventSetting()
 }
