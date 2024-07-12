@@ -13,7 +13,7 @@ class BatteryManager: NSObject {
     
     private var dataManager = DataManager.shared
     var batteryStatusPublisher = PassthroughSubject<BatteryStatus, Never>()
-    var batteryStatusNoCameraPublisher = PassthroughSubject<BatteryStatusNoCamera, Never>()
+//    var batteryStatusNoCameraPublisher = PassthroughSubject<BatteryStatusNoCamera, Never>()
     
     static let shared = BatteryManager()
     
@@ -42,15 +42,15 @@ class BatteryManager: NSObject {
                 default:
                     batteryStatusPublisher.send(BatteryStatus.normal)
             }
-            
-            switch batteryLevel {
-                case BatteryStatusNoCamera.stop.rawValue..<BatteryStatusNoCamera.warning.rawValue:
-                    batteryStatusNoCameraPublisher.send(BatteryStatusNoCamera.warning)
-                case 0..<BatteryStatusNoCamera.stop.rawValue:
-                    batteryStatusNoCameraPublisher.send(BatteryStatusNoCamera.stop)
-                default:
-                    batteryStatusNoCameraPublisher.send(BatteryStatusNoCamera.normal)
-            }
+//            
+//            switch batteryLevel {
+//                case BatteryStatusNoCamera.stop.rawValue..<BatteryStatusNoCamera.warning.rawValue:
+//                    batteryStatusNoCameraPublisher.send(BatteryStatusNoCamera.warning)
+//                case 0..<BatteryStatusNoCamera.stop.rawValue:
+//                    batteryStatusNoCameraPublisher.send(BatteryStatusNoCamera.stop)
+//                default:
+//                    batteryStatusNoCameraPublisher.send(BatteryStatusNoCamera.normal)
+//            }
         }
     }
 
