@@ -10,15 +10,14 @@ import UIKit
 public typealias doneCallback = () -> ()
 
 public class GizoAnalysis: NSObject {
-    var driveManager: DriveManager=DriveManager()
     
     public func start(lifecycleOwner: GizoAnalysisDelegate, onDone: doneCallback?) {
         if (!TokenValidateManager.shared.isValidate) {
             print("Token Invalidate")
             return
         }
-        driveManager.delegate = lifecycleOwner
-        driveManager.initialVideoCapture()
+        DriveManager.shared.delegate = lifecycleOwner
+        DriveManager.shared.initialVideoCapture()
         if (onDone != nil) {
             onDone!()
         }
@@ -29,8 +28,8 @@ public class GizoAnalysis: NSObject {
             print("Token Invalidate")
             return
         }
-        driveManager.stopVideoCapture()
-        driveManager.delegate = nil
+        DriveManager.shared.stopVideoCapture()
+        DriveManager.shared.delegate = nil
     }
     
     public func startSavingSession() {
@@ -39,7 +38,7 @@ public class GizoAnalysis: NSObject {
             return
         }
         GizoCommon.shared.isSavingSession = true
-        driveManager.startRecording()
+        DriveManager.shared.startRecording()
     }
     
     public func stopSavingSession() {
@@ -48,7 +47,9 @@ public class GizoAnalysis: NSObject {
             return
         }
         GizoCommon.shared.isSavingSession = false
-        driveManager.stopRecording()
+        if DriveManager.shared.isRecording {
+            DriveManager.shared.stopRecording()
+        }
     }
     
     public func attachPreview(preview: UIView) {
@@ -56,7 +57,7 @@ public class GizoAnalysis: NSObject {
             print("Token Invalidate")
             return
         }
-        driveManager.attachPreview(previewView: preview)
+        DriveManager.shared.attachPreview(previewView: preview)
     }
     
     public func lockPreview() {
@@ -64,7 +65,7 @@ public class GizoAnalysis: NSObject {
             print("Token Invalidate")
             return
         }
-        driveManager.lockPreview()
+        DriveManager.shared.lockPreview()
     }
     
     public func unlockPreview(preview: UIView?) {
@@ -72,6 +73,6 @@ public class GizoAnalysis: NSObject {
             print("Token Invalidate")
             return
         }
-        driveManager.unlockPreview(previewView: preview)
+        DriveManager.shared.unlockPreview(previewView: preview)
     }
 }

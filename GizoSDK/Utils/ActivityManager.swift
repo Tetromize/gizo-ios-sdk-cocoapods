@@ -35,6 +35,7 @@ class ActivityManager: NSObject {
     var isRecordingActivity = false
     
     private var dataManager = DataManager.shared
+    public var delegate: GizoAnalysisDelegate?
     
     static let shared = ActivityManager()
     
@@ -74,6 +75,7 @@ class ActivityManager: NSObject {
             activityTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(onTimeCheck), userInfo: nil, repeats: true)
         }
         activityTypePublisher.send(type)
+        self.delegate?.onUserActivity(type: typeName)
         activityManager.startActivityUpdates(to: OperationQueue.current!) { activity in
             if (activity != nil) {
                 if (activity!.confidence == .low) {
@@ -129,7 +131,7 @@ class ActivityManager: NSObject {
     
     @objc func onTimeCheck() {
         let model = LogActivityModel()
-        print("ssssssssss")
+//        print("ssssssssss")
         model.activity = self.typeName
         model.confidence = self.confidence
 //        LogActivityManager.shared.appendActivityCSV(model: model)
@@ -164,6 +166,7 @@ class ActivityManager: NSObject {
             }
             preType = type
             activityTypePublisher.send(type)
+            self.delegate?.onUserActivity(type: typeName)
         }
     }
     

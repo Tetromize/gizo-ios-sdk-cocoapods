@@ -23,6 +23,8 @@ class GPSManager: NSObject, PassiveLocationManagerDelegate {
     
     private var dataManager = DataManager.shared
     
+    public var delegate: GizoAnalysisDelegate?
+    
     static let shared = GPSManager()
     
     override init() {
@@ -86,6 +88,8 @@ class GPSManager: NSObject, PassiveLocationManagerDelegate {
         self.locationModel?.speed = round(speed*3.6)
         if let model = self.locationModel {
             locationUpdatePublisher.send(model)
+            self.delegate?.onLocationChange(location: CLLocationCoordinate2DMake(model.latitude ?? 0, model.longitude ?? 0), isGpsOn: true)
+            self.delegate?.onSpeedChange(speedLimitKph: Int(model.speedLimit ?? 0), speedKph: Int(model.speed ?? 0))
         }
         self.checkSpeedOver()
     }

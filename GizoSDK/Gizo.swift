@@ -24,6 +24,8 @@ public class Gizo: NSObject {
 //        GizoCommon.shared.delegate = delegate
         GizoCommon.shared.options = options
         TokenValidateManager.shared.checkLicense()
+        DriveManager.shared.startInitSensors()
+        CameraManager.shared.checkPermissionsCamera()
     }
     
     static public func hello() {

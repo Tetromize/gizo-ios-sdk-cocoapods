@@ -11,13 +11,13 @@ class DataManager {
 
     private init() {}
 
-    func createTripFolder(){
+    func createTripFolder(rootName: String?){
         let fileManager = FileManager.default
         let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss-SSS"
         let folderName = dateFormatter.string(from: Date())
-        let tripFolderURL = documentsDirectory.appendingPathComponent("Trips/\(folderName)")
+        let tripFolderURL = documentsDirectory.appendingPathComponent("\(rootName ?? "Trips")/\(folderName)")
 
         do {
             try fileManager.createDirectory(at: tripFolderURL, withIntermediateDirectories: true, attributes: nil)

@@ -38,9 +38,10 @@ class DriveManager : NSObject{
     private var stillJob: DispatchWorkItem?
     private var lastActivity: ActivityType = .still
     
+    static let shared = DriveManager()
+    
     public var delegate: GizoAnalysisDelegate?
     var gizoOption = GizoCommon.shared.options
-    
     
     func initialVideoCapture(){
         
@@ -80,64 +81,11 @@ class DriveManager : NSObject{
     
     func stopVideoCapture(){
         stopCamera()
-        gpsManager.stopGPS()
-        imuManager.stopMotion()
-        activityManager.stopUpdateMotionActivity()
-        batteryManager.stopBatteryStatus()
-        thermalManager.stopThermalState()
-        
-        isStartSensors = false
+        stopSensors()
     }
     
     func startRecording() {
-        if !checkBatteryStatus() {
-            return
-        }
-        
-        if !checkThermalState() {
-            return
-        }
-        
-        if isRecording {
-            isStartRecording = true
-            stopRecording()
-        }
-
-        recordingState = RecordingState.Full
-        let infoDect: [String : Any] = ["TripType": TripType.Full.rawValue]
-
-        dataManager.createTripFolder()
-        dataManager.createLockFile()
-        isRecording = true
-        dataManager.saveTXT(fileName: Constants.infoFileName, text: dataManager.dict2JsonStr(dict: infoDect as NSDictionary) ?? "")
-        let videoSetting = gizoOption?.videoSetting
-        if (videoSetting?.allowRecording != nil && (videoSetting?.allowRecording)!) {
-            cameraManager.startRecording(to: dataManager.folderPath!)
-        }
-        let gpsSetting = gizoOption?.gpsSetting
-        if (gpsSetting?.allowGps != nil && (gpsSetting?.allowGps)!) {
-            dataManager.createGPSCSV()
-            gpsManager.startRecording()
-        }
-        let imuSetting = gizoOption?.imuSetting
-        if ((imuSetting?.allowAccelerationSensor != nil && (imuSetting?.allowAccelerationSensor)!) ||
-            (imuSetting?.allowGyroscopeSensor != nil && (imuSetting?.allowGyroscopeSensor)!) ||
-            (imuSetting?.allowMagneticSensor != nil && (imuSetting?.allowMagneticSensor)!)) {
-            dataManager.createIMUCSV()
-            imuManager.startRecording()
-        }
-        let userActivitySetting = gizoOption?.userActivitySetting
-        if (userActivitySetting?.saveCsvFile != nil && (userActivitySetting?.saveCsvFile)!) {
-            dataManager.createActivityCSV()
-            activityManager.startRecording()
-        }
-        dataManager.createAppCSV()
-        //        appManager.startRecording()
-        let phoneEventSetting = gizoOption?.phoneEventSetting
-        if (phoneEventSetting?.saveCsvFile != nil && (phoneEventSetting?.saveCsvFile)!) {
-            dataManager.createPhoneEventCSV()
-            phoneEventManager.startRecording()
-        }
+        startRecordingCamera()
     }
     
     
@@ -155,10 +103,33 @@ class DriveManager : NSObject{
         self.cameraManager.previewLayer?.isHidden = false
     }
     
+    func startInitSensors(){
+        setupActivityProcessing()
+        setupGPSProcessing()
+    }
+    
     func startCamera(){
         cameraManager.checkPermissionsAndSetupSession()
 
         setupCameraProcessing()
+        
+        if !isStartSensors{
+            startSensors()
+        }
+    
+    }
+    
+    func startNoCamera(){
+        if !isStartSensors{
+            startSensors()
+        }
+    }
+    
+    func startSensors(){
+        setupIMUProcessing()
+        setupBatteryProcessing()
+        setupThermalProcessing()
+        isStartSensors = true
     }
     
     func stopCamera(){
@@ -167,6 +138,29 @@ class DriveManager : NSObject{
         if isRecording {
             stopRecording()
         }
+        
+        if !isRecording {
+            stopSensors()
+        }
+    }
+    
+    func stopSensors(){
+//        if isRecording {
+//            stopRecording()
+//        }
+//        gpsManager.stopGPS()
+        imuManager.stopMotion()
+//        activityManager.stopUpdateMotionActivity()
+        batteryManager.stopBatteryStatus()
+        thermalManager.stopThermalState()
+        
+        isStartSensors = false
+    }
+    
+    func stopAllSensors(){
+        stopSensors()
+        gpsManager.stopGPS()
+        activityManager.stopUpdateMotionActivity()
     }
     
     var previewLayer: AVCaptureVideoPreviewLayer? {
@@ -174,6 +168,7 @@ class DriveManager : NSObject{
     }
     
     func setupCameraProcessing() {
+        cameraManager.delegate = self.delegate
 //        cameraManager.ttcAlertPublisher
 //            .receive(on: RunLoop.main)
 //            .sink { [weak self] alert in
@@ -187,6 +182,7 @@ class DriveManager : NSObject{
     }
     
     func setupGPSProcessing() {
+        gpsManager.delegate = self.delegate
         gpsManager.locationUpdatePublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] locationModel in
@@ -198,6 +194,7 @@ class DriveManager : NSObject{
     }
     
     func setupIMUProcessing() {
+        imuManager.delegate = self.delegate
         imuManager.orientationUpdatePublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] isHiddenOrientationCover in
@@ -209,6 +206,8 @@ class DriveManager : NSObject{
     }
     
     func setupActivityProcessing() {
+        activityManager.delegate = self.delegate
+
         activityManager.activityTypePublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] activityTpe in
@@ -220,6 +219,7 @@ class DriveManager : NSObject{
     }
     
     func setupBatteryProcessing() {
+        batteryManager.delegate = self.delegate
         batteryManager.batteryStatusPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] batteryStatus in
@@ -227,10 +227,18 @@ class DriveManager : NSObject{
             }
             .store(in: &cancellables)
         
+//        batteryManager.batteryStatusNoCameraPublisher
+//            .receive(on: RunLoop.main)
+//            .sink { [weak self] batteryStatus in
+//                self?.handleBatteryStatusNoCameraDidChange(batteryStatus)
+//            }
+//            .store(in: &cancellables)
+        
         batteryManager.startBatteryStatus()
     }
     
     func setupThermalProcessing() {
+        thermalManager.delegate = self.delegate
         thermalManager.thermalStatePublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] thermalState in
@@ -289,51 +297,56 @@ class DriveManager : NSObject{
     
     private func handleBatteryStatusDidChange(_ batteryStatus: BatteryStatus) {
         self.batteryStatus = batteryStatus
-//        if batteryStatus != BatteryStatus.normal{
-//            AnalyticManager.shared.logEvent(
-//                name: AnalyticManager.Event.batteryStatus,
-//                parameters: [
-//                    AnalyticManager.Param.batteryStatus: batteryStatus
-//                ]
-//            )
-//        }
-//        if uiState.isRecording == true && batteryStatus == BatteryStatus.stop {
+        if batteryStatus != BatteryStatus.normal{
+        }
+        if isRecording == true && batteryStatus == BatteryStatus.stop {
 //            uiState.isShowBatteryDialog = true
 //            cameraManager.disableAi()
-//            stopRecording()
-//        }else if batteryStatus == BatteryStatus.stop {
+            stopRecording()
+        }else if batteryStatus == BatteryStatus.stop {
 //            cameraManager.disableAi()
-//        }
-//        else if batteryStatus == BatteryStatus.warning {
+        }
+        else if batteryStatus == BatteryStatus.warning {
 //            cameraManager.disableAi()
-//        }else if batteryStatus == BatteryStatus.normal {
-//            if thermalState != ProcessInfo.ThermalState.serious {
+        }else if batteryStatus == BatteryStatus.normal {
+            if thermalState != ProcessInfo.ThermalState.serious {
 //                cameraManager.enableAi()
-//            }
-//        }
+            }
+        }
     }
+    
+//    private func handleBatteryStatusNoCameraDidChange(_ batteryStatus: BatteryStatusNoCamera) {
+//        self.batteryStatusNoCamera = batteryStatus
+//        if batteryStatus != BatteryStatusNoCamera.normal{
+//        }
+//        if uiStateNoCamera.isRecording == true && batteryStatus == BatteryStatusNoCamera.stop {
+//            if isAutoStop == true {
+//                uiState.isShowBatteryDialog = true
+//                stopRecording()
+//            }
+//        }else if batteryStatus == BatteryStatusNoCamera.stop {
+//        }
+//        else if batteryStatus == BatteryStatusNoCamera.warning {
+//        }else if batteryStatus == BatteryStatusNoCamera.normal {
+//        }
+//        
+//    }
     
     private func handleThermalStateDidChange(_ thermalState: ProcessInfo.ThermalState) {
         self.thermalState = thermalState
-//        if thermalState != .nominal{
-//            AnalyticManager.shared.logEvent(
-//                name: AnalyticManager.Event.thermalStatus,
-//                parameters: [
-//                    AnalyticManager.Param.status: thermalState
-//                ]
-//            )
-//        }
-//        if (uiState.isRecording || uiStateNoCamera.isRecording) && thermalState == ProcessInfo.ThermalState.serious {
+        if thermalState != .nominal{
+        }
+        if (isRecording) && thermalState == ProcessInfo.ThermalState.serious {
 //            uiState.isShowThermalDialog = true
 //            cameraManager.disableAi()
-//            stopRecording()
-//        } else if thermalState == ProcessInfo.ThermalState.serious {
+            stopRecording()
+        } else if thermalState == ProcessInfo.ThermalState.serious {
 //            cameraManager.disableAi()
-//        }else{
-//            if batteryStatus == BatteryStatus.normal{
+        }else{
+            if batteryStatus == BatteryStatus.normal{
 //                cameraManager.enableAi()
-//            }
-//        }
+            }
+        }
     }
 
     func preview(to view: UIView) {
@@ -344,6 +357,7 @@ class DriveManager : NSObject{
             if previewLayer.superlayer == nil {
                 view.layer.addSublayer(previewLayer)
             }
+//            self.uiState.isPreviewAttached = true
         }
     }
 
@@ -352,6 +366,11 @@ class DriveManager : NSObject{
             previewConnection.videoOrientation = .landscapeRight
         }
     }
+    
+//    func togglePreviewVisibility() {
+//        uiState.isPreviewAttached.toggle()
+//        isPreviewVisible.toggle()
+//    }
 
     func startSession() {
         cameraManager.startSession()
@@ -387,6 +406,57 @@ class DriveManager : NSObject{
         }
     }
     
+    func startRecordingCamera() {
+        if !checkBatteryStatus() {
+            return
+        }
+        
+        if !checkThermalState() {
+            return
+        }
+        
+        if isRecording {
+            isStartRecording = true
+            stopRecording()
+        }
+
+        recordingState = RecordingState.Full
+        let infoDect: [String : Any] = ["TripType": TripType.Full.rawValue]
+
+        dataManager.createTripFolder(rootName: gizoOption?.folderName)
+        dataManager.createLockFile()
+        isRecording = true
+        dataManager.saveTXT(fileName: Constants.infoFileName, text: dataManager.dict2JsonStr(dict: infoDect as NSDictionary) ?? "")
+        let videoSetting = gizoOption?.videoSetting
+        if (videoSetting?.allowRecording != nil && (videoSetting?.allowRecording)!) {
+            cameraManager.startRecording(to: dataManager.folderPath!)
+        }
+        let gpsSetting = gizoOption?.gpsSetting
+        if (gpsSetting?.allowGps != nil && (gpsSetting?.allowGps)!) {
+            dataManager.createGPSCSV()
+            gpsManager.startRecording()
+        }
+        let imuSetting = gizoOption?.imuSetting
+        if ((imuSetting?.allowAccelerationSensor != nil && (imuSetting?.allowAccelerationSensor)!) ||
+            (imuSetting?.allowGyroscopeSensor != nil && (imuSetting?.allowGyroscopeSensor)!) ||
+            (imuSetting?.allowMagneticSensor != nil && (imuSetting?.allowMagneticSensor)!)) {
+            dataManager.createIMUCSV()
+            imuManager.startRecording()
+        }
+        let userActivitySetting = gizoOption?.userActivitySetting
+        if (userActivitySetting?.saveCsvFile != nil && (userActivitySetting?.saveCsvFile)!) {
+            dataManager.createActivityCSV()
+            activityManager.startRecording()
+        }
+        dataManager.createAppCSV()
+        //        appManager.startRecording()
+        let phoneEventSetting = gizoOption?.phoneEventSetting
+        if (phoneEventSetting?.saveCsvFile != nil && (phoneEventSetting?.saveCsvFile)!) {
+            dataManager.createPhoneEventCSV()
+            phoneEventManager.startRecording()
+        }
+    }
+    
     func startRecordingNoCamera(autoStop: Bool = true) {
         self.isAutoStop = autoStop
 
@@ -408,7 +478,7 @@ class DriveManager : NSObject{
         recordingState = RecordingState.NoCamera
         
         let infoDect = ["TripType": TripType.ImuGps.rawValue] as [String : Any]
-        dataManager.createTripFolder()
+        dataManager.createTripFolder(rootName: gizoOption?.folderName)
         dataManager.createLockFile()
 //        uiStateNoCamera.isRecording = true
 //        uiStateNoCamera.startTimeNoCamera = Date()
@@ -448,7 +518,7 @@ class DriveManager : NSObject{
         recordingState = RecordingState.Background
         let infoDect = ["TripType": TripType.Imu.rawValue] as [String : Any]
 
-        dataManager.createTripFolder()
+        dataManager.createTripFolder(rootName: gizoOption?.folderName)
         dataManager.createLockFile()
         isRecording = true
         dataManager.saveTXT(fileName: Constants.infoFileName, text: dataManager.dict2JsonStr(dict: infoDect as NSDictionary) ?? "")
@@ -480,6 +550,11 @@ class DriveManager : NSObject{
     
     func stopRecording() {
         isRecording = false
+        
+        if recordingState == RecordingState.Full {
+            cameraManager.stopRecording()
+//            cameraManager.stopRecordingTTC()
+        }
 
         gpsManager.stopRecording()
         imuManager.stopRecording()
@@ -574,7 +649,7 @@ class DriveManager : NSObject{
 
     func changeRecordState(to newRecordingState: RecordingState? = nil) {
         if isStartSensors {
-//            stopSensors()
+            stopSensors()
         }
 
         switch newRecordingState {
@@ -591,13 +666,13 @@ class DriveManager : NSObject{
             case .Background:
                 recordingState = RecordingState.Background
                 if !isStartSensors {
-//                    startSensors()
+                    startSensors()
                 }
                 startRecordingBackground()
             case .NoCamera:
                 recordingState = RecordingState.NoCamera
                 if !isStartSensors {
-//                    startSensors()
+                    startSensors()
                 }
                 startRecordingNoCamera(autoStop: false)
             default:

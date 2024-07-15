@@ -14,7 +14,8 @@ class BatteryManager: NSObject {
     private var dataManager = DataManager.shared
     var batteryStatusPublisher = PassthroughSubject<BatteryStatus, Never>()
 //    var batteryStatusNoCameraPublisher = PassthroughSubject<BatteryStatusNoCamera, Never>()
-    
+    public var delegate: GizoAnalysisDelegate?
+
     static let shared = BatteryManager()
     
     override init() {
@@ -37,10 +38,13 @@ class BatteryManager: NSObject {
             switch batteryLevel {
                 case BatteryStatus.stop.rawValue..<BatteryStatus.warning.rawValue:
                     batteryStatusPublisher.send(BatteryStatus.warning)
+                self.delegate?.onBatteryStatusChange(status: BatteryStatus.warning)
                 case 0..<BatteryStatus.stop.rawValue:
                     batteryStatusPublisher.send(BatteryStatus.stop)
+                self.delegate?.onBatteryStatusChange(status: BatteryStatus.stop)
                 default:
                     batteryStatusPublisher.send(BatteryStatus.normal)
+                self.delegate?.onBatteryStatusChange(status: BatteryStatus.normal)
             }
 //            
 //            switch batteryLevel {

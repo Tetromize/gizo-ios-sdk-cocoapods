@@ -16,7 +16,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var isRecording = false
     var getImage = false
     var matrixText: String = ""
-    var isRecordingTTC = false
+//    var isRecordingTTC = false
 //    var isEnableAi = true
 //    private var collisionThreshold: Float = 0.5
 //    var onChangedImage: ((CIImage) -> Void) = {_ in }
@@ -39,6 +39,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     private var dataManager = DataManager.shared
     private var gpsManager = GPSManager.shared
+    public var delegate: GizoAnalysisDelegate?
     
     static let shared = CameraManager()
     
@@ -75,6 +76,21 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                         self?.setupCaptureSession()
                     }
                 }
+            }
+        default:
+            print("Access to the camera is denied or restricted")
+        }
+    }
+    
+    public func checkPermissionsCamera() {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+//                if granted {
+//                    DispatchQueue.main.async {
+//                        self?.setupCaptureSession()
+//                    }
+//                }
             }
         default:
             print("Access to the camera is denied or restricted")
@@ -215,6 +231,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             print("Failed to start writing.")
             teardownWriter()
         }
+        self.delegate?.onRecordingEvent(status: VideoRecordStatus.Start)
     }
     
     func stopRecording() {
@@ -225,6 +242,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         assetWriter?.finishWriting { [weak self] in
             self?.teardownWriter()
         }
+        self.delegate?.onRecordingEvent(status: VideoRecordStatus.Stop)
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {

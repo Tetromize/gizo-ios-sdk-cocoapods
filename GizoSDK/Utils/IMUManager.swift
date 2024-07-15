@@ -32,8 +32,15 @@ class IMUManager: NSObject {
     public var magY: Double?
     public var magZ: Double?
     public var updateInterval: Double=0.01
+    let model = TripCSVIMUModel.init()
     
     private var dataManager = DataManager.shared
+    public var delegate: GizoAnalysisDelegate?
+    var accDict: NSDictionary?
+    var gyrDict: NSDictionary?
+    var magDict: NSDictionary?
+    var graDict: NSDictionary?
+    var accLinDict: NSDictionary?
     static let shared = IMUManager()
     
     override init() {
@@ -52,6 +59,12 @@ class IMUManager: NSObject {
                 self.accX = x*9.81
                 self.accY = y*9.81
                 self.accZ = z*9.81
+                self.model.accX = String(self.accX ?? 0)
+                self.model.accY = String(self.accY ?? 0)
+                self.model.accZ = String(self.accZ ?? 0)
+                self.delegate?.onAccelerationSensor(accX: self.accX, accY: self.accY, accZ: self.accZ)
+                self.accDict = self.model.convertToDict(keys: ["accX", "accY", "accZ"])
+                self.sendImuSensor()
                 if ((fabs(y) + 0.1) >= fabs(x)) {
                     if (y >= 0.1) {
                         self.shootingOrientation = UIDeviceOrientation.portraitUpsideDown
@@ -80,6 +93,7 @@ class IMUManager: NSObject {
                 
                 if ((self.shootingOrientation == UIDeviceOrientation.landscapeLeft || self.shootingOrientation == UIDeviceOrientation.landscapeRight) && self.isValidOrientation) {
                     self.orientationUpdatePublisher.send(true)
+                    self.delegate?.onGravityAlignmentChange(isAlign: true)
                 }
             }
         }
@@ -98,6 +112,7 @@ class IMUManager: NSObject {
                 self.gyrX = gyroData?.rotationRate.x ?? 0
                 self.gyrY = gyroData?.rotationRate.y ?? 0
                 self.gyrZ = gyroData?.rotationRate.z ?? 0
+                self.delegate?.onGyroscopeSensor(gyrX: self.gyrX, gyrY: self.gyrY, gyrZ: self.gyrZ)
             }
         }
     }
@@ -115,6 +130,12 @@ class IMUManager: NSObject {
                 self.magX = magData?.magneticField.x ?? 0
                 self.magY = magData?.magneticField.y ?? 0
                 self.magZ = magData?.magneticField.z ?? 0
+                self.model.magX = String(self.magX ?? 0)
+                self.model.magY = String(self.magY ?? 0)
+                self.model.magZ = String(self.magZ ?? 0)
+                self.delegate?.onMagneticSensor(magX: self.magX, magY: self.magY, magZ: self.magZ)
+                self.magDict = self.model.convertToDict(keys: ["magX", "magY", "magZ"])
+                self.sendImuSensor()
             }
         }
     }
@@ -135,6 +156,19 @@ class IMUManager: NSObject {
                 self.accLinX = motion?.userAcceleration.x ?? 0*9.81
                 self.accLinY = motion?.userAcceleration.y ?? 0*9.81
                 self.accLinZ = motion?.userAcceleration.z ?? 0*9.81
+                
+                self.model.graX = String(self.graX ?? 0)
+                self.model.graY = String(self.graY ?? 0)
+                self.model.graZ = String(self.graZ ?? 0)
+                self.model.accLinX = String(self.accLinX ?? 0)
+                self.model.accLinY = String(self.accLinY ?? 0)
+                self.model.accLinZ = String(self.accLinZ ?? 0)
+
+                self.delegate?.onGravitySensor(graX: self.graX, graY: self.graY, graZ: self.graZ)
+                self.delegate?.onLinearAccelerationSensor(accLinX: self.accLinX, accLinY: self.accLinY, accLinZ: self.accLinZ)
+                self.graDict = self.model.convertToDict(keys: ["graX", "graY", "graZ"])
+                self.accLinDict = self.model.convertToDict(keys: ["accLinX", "accLinY", "accLinZ"])
+                self.sendImuSensor()
             })
         }
     }
@@ -168,6 +202,10 @@ class IMUManager: NSObject {
             }
             timer?.activate()
         }
+    }
+    
+    func sendImuSensor(){
+        self.delegate?.onImuSensor(acceleration: accDict, linearAcceleration: accLinDict, gyroscope: gyrDict, magnetic: magDict, gravity: graDict)
     }
     
     func recordIMU() {

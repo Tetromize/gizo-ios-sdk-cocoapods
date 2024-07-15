@@ -51,11 +51,9 @@
 		2A8ACC0C2C4164B3005345C0 /* TTCAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACC0B2C4164B3005345C0 /* TTCAlert.swift */; };
 		2A8ACC0E2C416C94005345C0 /* TripType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACC0D2C416C93005345C0 /* TripType.swift */; };
 		2A8ACC102C416DEE005345C0 /* GizoPhoneEventSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ACC0F2C416DEE005345C0 /* GizoPhoneEventSetting.swift */; };
-		CC9ABB88CDB7B1A2303D85C8 /* Pods_GizoSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102EEC9BD388D9D04D8B7578 /* Pods_GizoSDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		102EEC9BD388D9D04D8B7578 /* Pods_GizoSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GizoSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A558B952BD241CB00F14202 /* GizoSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GizoSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A558B982BD241CB00F14202 /* GizoSDKCocoapods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GizoSDKCocoapods.h; sourceTree = "<group>"; };
 		2A558BA02BD2424400F14202 /* GizoBaseSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizoBaseSetting.swift; sourceTree = "<group>"; };
@@ -112,7 +110,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC9ABB88CDB7B1A2303D85C8 /* Pods_GizoSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,7 +223,6 @@
 		D4F1543E07A48174663D7AA8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				102EEC9BD388D9D04D8B7578 /* Pods_GizoSDK.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
