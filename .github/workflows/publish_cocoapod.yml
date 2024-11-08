@@ -1,0 +1,95 @@
+name: Publish CocoaPods Package
+
+on:
+  push:
+    tags:
+      - 'v*'  # Adjust the pattern as needed (e.g., 'v*' for version tags like v1.0.0)
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: macos-latest
+    env:
+      FRAMEWORK_NAME: GizoSDK
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      - name: Set up Xcode
+        run: sudo xcode-select -switch /Applications/Xcode.app
+
+      - name: Build XCFramework
+        run: |
+          echo "Building for iOS..."
+          xcodebuild archive \
+            -workspace GizoSDK.xcworkspace \
+            -scheme $FRAMEWORK_NAME \
+            -destination="iOS" \
+            -archivePath "archives/ios_devices.xcarchive" \
+            -sdk iphoneos \
+            BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+            OTHER_SWIFT_FLAGS=-no-verify-emitted-module-interface \
+            SKIP_INSTALL=NO
+
+            # 3. Archive framework (iOS Simulators)
+          echo "Building for iOS Simulator..."
+          xcodebuild archive \
+            -workspace GizoSDK.xcworkspace \
+            -scheme $FRAMEWORK_NAME \
+            -sdk iphonesimulator \
+            -archivePath "archives/ios_simulators.xcarchive" \
+            -arch x86_64 -arch arm64 \
+            BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+            OTHER_SWIFT_FLAGS=-no-verify-emitted-module-interface \
+            SKIP_INSTALL=NO
+
+          # 5. Build XCFramework
+          echo "Building XCFramework..."
+          xcodebuild -create-xcframework -output "$FRAMEWORK_NAME.xcframework" \
+            -framework "archives/ios_devices.xcarchive/Products/Library/Frameworks/$FRAMEWORK_NAME.framework" \
+            -framework "archives/ios_simulators.xcarchive/Products/Library/Frameworks/$FRAMEWORK_NAME.framework"
+
+      - name: Zip XCFramework
+        run: |
+          echo "Compressing XCFramework..."
+          zip -r -X "$FRAMEWORK_NAME.zip" "$FRAMEWORK_NAME.xcframework" "LICENSE"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: $FRAMEWORK_NAME.xcframework.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to Public Repository
+        run: |
+          git clone https://github.com/artificient-ai/gizo-ios-sdk-cocoapods-alpha public-repo
+          mkdir -p public-repo/GizoSDK/$GITHUB_REF_NAME
+          cp -r $FRAMEWORK_NAME.xcframework public-repo/GizoSDK/$GITHUB_REF_NAME
+          cd public-repo
+          git add $FRAMEWORK_NAME.xcframework
+          git commit -m "Add XCFramework version $GITHUB_REF_NAME"
+          git tag $GITHUB_REF_NAME
+          git push origin main --tags
+
+      - name: Create .podspec file
+        run: |
+            VERSION=$(echo $GITHUB_REF_NAME | sed 's/^v//')
+            echo "Pod::Spec.new do |s|
+            s.name = '$FRAMEWORK_NAME'
+            s.version = '$VERSION'
+            s.source = { :git => 'https://github.com/artificient-ai/gizo-ios-sdk-cocoapods-alpha/raw/#{s.version}/GizoSDK/#{s.version}/GizoSDK.zip', :tag => s.version.to_s }
+            s.ios.deployment_target = '13.0'
+            s.vendored_frameworks = '$FRAMEWORK_NAME.xcframework'
+            s.source_files = '$FRAMEWORK_NAME/**/*.{swift,h,m}'
+            end" > $FRAMEWORK_NAME.podspec
+
+      - name: Push to CocoaPods Trunk
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: pod trunk push $FRAMEWORK_NAME.podspec --allow-warnings
+
+
+
+
+      

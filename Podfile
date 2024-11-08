@@ -7,8 +7,8 @@ target 'GizoSDK' do
 
   # Pods for GizoSDK
 
-  pod 'MapboxMaps', '10.12.3'
-  pod 'MapboxNavigation', '2.12.0'
-  pod 'SnapKit', '5.6.0'
+#  pod 'MapboxMaps', '10.12.3'
+#  pod 'MapboxNavigation', '2.12.0'
+#  pod 'SnapKit', '5.6.0'
 
 end
